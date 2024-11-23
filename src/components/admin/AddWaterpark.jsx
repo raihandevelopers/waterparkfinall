@@ -63,6 +63,10 @@ function AddWaterpark() {
   const handleSubmit = async (e) => {
     e.preventDefault();
   
+    if (images.length === 0) {
+      toast.error("Please upload at least one image");
+      return;
+    }  
     // Create a new FormData object on each submit to avoid leftover data
     const data = new FormData();
   
@@ -108,14 +112,14 @@ function AddWaterpark() {
       setExcluded([]); // Reset excluded
       setImages([]); // Clear images array
       setTimeout(() => {
-        window.location.reload();
+        // window.location.reload();
       }, 1000);
       // Optionally, you can reset the FormData object too, but it will be recreated on next submit
     } catch (error) {
       console.error(error);
       toast.error("Failed to add waterpark");
       setTimeout(() => {
-        window.location.reload();
+        // window.location.reload();
       }, 1000);
     }
   };
