@@ -8,8 +8,6 @@ function AddWaterpark() {
     name: "",
     description: "",
     location: "",
-    included: "",
-    excluded: "",
     map: "",
     adultPrice: "",
     childPrice: "",
@@ -90,7 +88,7 @@ function AddWaterpark() {
         { headers: { "Content-Type": "multipart/form-data" } }
       );
       if(response.status == 201){
-        toast.success("Waterpark added successfully");
+        toast.success(response.data.message);
       }
       console.log(response.data);
       // Reset form data to its initial state
@@ -109,12 +107,16 @@ function AddWaterpark() {
       setIncluded([]); // Reset included
       setExcluded([]); // Reset excluded
       setImages([]); // Clear images array
-      window.location.reload();
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
       // Optionally, you can reset the FormData object too, but it will be recreated on next submit
     } catch (error) {
       console.error(error);
       toast.error("Failed to add waterpark");
-      window.location.reload();  // This will refresh the page
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     }
   };
   
