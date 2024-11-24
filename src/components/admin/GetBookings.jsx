@@ -39,6 +39,7 @@ const GetBookings = () => {
             <tr className="bg-gray-200">
               <th className="px-4 py-2 text-left">Customer Name</th>
               <th className="px-4 py-2 text-left">Waterpark</th>
+              <th className="px-4 py-2 text-left">Visiting Date</th>
               <th className="px-4 py-2 text-left">Booking Date</th>
               <th className="px-4 py-2 text-left">Email</th>
               <th className="px-4 py-2 text-left">Total Price</th>
@@ -56,6 +57,7 @@ const GetBookings = () => {
                   <td className="px-4 py-2">{booking.name}</td>
                   <td className="px-4 py-2">{booking.waterparkName}</td>
                   <td className="px-4 py-2">{new Date(booking.date).toLocaleDateString()}</td>
+                  <td className="px-4 py-2">{new Date(booking.bookingDate).toLocaleDateString()}</td>
                   <td className="px-4 py-2">{booking.email}</td>
                   <td className="px-4 py-2">{booking.totalPrice}</td>
                   <td className="px-4 py-2">{booking.phone}</td>
