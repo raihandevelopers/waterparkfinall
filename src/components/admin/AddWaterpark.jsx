@@ -239,7 +239,7 @@ function AddWaterpark() {
           <input
             type="file"
             multiple
-            accept="image/*"
+            accept="image/jpeg,image/png,image/jpg"
             onChange={handleFileChange}
             className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-indigo-300 focus:outline-none"
           />
