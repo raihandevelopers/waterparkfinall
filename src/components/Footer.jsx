@@ -113,12 +113,12 @@ const Footer = () => {
             </NavLink>
         </div>
         <div className="fomoinfo">
-          <NavLink to="/farmvilla" className="fomoinfo"><img src="/waterpark.jpg" alt="" />
+          <NavLink to="/waterparks" className="fomoinfo"><img src="/waterpark.jpg" alt="" />
             <p style={{ fontSize: "12px" }}> Water Parks</p>
           </NavLink>
         </div>
         <div className="fomoinfo">
-          <NavLink to="/influencers" className="fomoinfo"><img src="https://myresortbooking.in/public/images/icons/collab.webp" alt="" />
+          <NavLink to="/gallery" className="fomoinfo"><img src="/galleryimg.png" alt="" />
             <p style={{ fontSize: "12px" }}>Gallery</p>
           </NavLink>
         </div>

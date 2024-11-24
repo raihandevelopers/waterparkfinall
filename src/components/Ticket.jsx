@@ -36,7 +36,7 @@ const WaterparkTicket = () => {
         {/* Ticket Header */}
         <div className="relative bg-[#fff] text-white text-center py-4">
           <h1 className="text-lg font-bold">Creating Memories</h1>
-          <p className="text-sm italic text-black">One Adventure at a Time with MRB</p>
+          <p className="text-sm italic text-black">One Adventure at a Time with Waterparkchalo</p>
           <div className="absolute top-2 right-2">
             <img src="/logo.png" alt="Logo" className="h-10" />
           </div>
@@ -63,7 +63,8 @@ const WaterparkTicket = () => {
               <span className="block break-words max-w-full">{booking._id}</span>
             </p>
             <p>
-              <span className="font-bold">Payment Id:</span> pay_P5cD6ESfdBTZ0B
+              <span className="font-bold">Payment Id:</span> 
+              <span className="block break-words max-w-full">pay_P5cD6ESfdBTZ0B</span>
             </p>
             <p>
               <span className="font-bold">Booking Date:</span>{" "} <br/>

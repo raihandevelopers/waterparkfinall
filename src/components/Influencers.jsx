@@ -35,15 +35,32 @@ const Influencers = () => {
 
   return (
     <>
+
+
+
           <img
         src="whatsapp.png"
         alt="WhatsApp Logo"
         className="w-24 h-24 fixed z-[10] top-[75vh] cursor-pointer"
         onClick={() => window.open("https://wa.me/918847714464", "_blank")}
       />
+
+
+
     <div className="p-4 bg-gray-100 my-24">
-      <h1 className="text-2xl font-bold text-center mb-6">Gallery</h1>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+ {/* Hero Section */}
+ <div className="relative bg-cover bg-center h-64 flex items-center justify-center mb-6">
+        <img
+          src="breadcrumb.jpeg" // Replace with your image path
+          alt="Water Park" // Add a relevant alt text
+          className="absolute inset-0 object-cover w-full h-full"
+        />
+        <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+        <div className="relative text-center text-white px-6">
+          <h1 className="text-4xl font-bold mb-4 text-white">Gallery</h1>
+   
+        </div>
+      </div>      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {images.map((image, index) => (
           <div
             key={index}

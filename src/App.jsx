@@ -40,8 +40,8 @@ function App() {
           <Route path="" element={<Home />} />
           <Route path="contact" element={<Contact />} />
           <Route path="about" element={<About />} />
-          <Route path="farmvilla" element={<Farmvilla />} />
-          <Route path="influencers" element={<Influencers />} />
+          <Route path="waterparks" element={<Farmvilla />} />
+          <Route path="gallery" element={<Influencers />} />
           <Route path="resorts" element={<Resorts />} />
           <Route path="checkout" element={<CheckoutPage />} />
           <Route path="UserDetails" element={<UserHome />} />

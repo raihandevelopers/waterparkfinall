@@ -235,7 +235,7 @@ function CheckoutPage() {
                   onChange={handlePaymentChange}
                   className="w-5 h-5 text-blue-600 border-gray-300 focus:ring-blue-500"
                 />
-                <span className="text-gray-700">Credit Card/Debit Card/NetBanking (Pay by Razorpay)</span>
+                <span className="text-gray-700">Credit Card/Debit Card/NetBanking (Pay by PhonePay)</span>
               </label>
             </div>
           </div>

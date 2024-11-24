@@ -91,10 +91,10 @@ const Header = () => {
           <NavLink to="/" className="nav-link" onClick={closeMenu}>
             Home
           </NavLink>
-          <NavLink to="/farmvilla" className="nav-link" onClick={closeMenu}>
+          <NavLink to="/waterparks" className="nav-link" onClick={closeMenu}>
             Water Parks
           </NavLink>
-          <NavLink to="/influencers" className="nav-link" onClick={closeMenu}>
+          <NavLink to="/gallery" className="nav-link" onClick={closeMenu}>
             Gallery
           </NavLink>
           <NavLink to="/about" className="nav-link" onClick={closeMenu}>

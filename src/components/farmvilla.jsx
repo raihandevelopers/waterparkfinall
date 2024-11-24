@@ -30,6 +30,9 @@ const WaterParks = () => {
   }, []);
   return (
     <>
+
+
+
       <img
         src="whatsapp.png"
         alt="WhatsApp Logo"
@@ -38,7 +41,19 @@ const WaterParks = () => {
       />
       <div className="min-h-screen bg-gray-100 p-6 my-12">
         {/* Page Heading */}
-        <h1 className="text-3xl font-bold text-center mb-8 mt-6">Water Parks</h1>
+ {/* Hero Section */}
+ <div className="relative bg-cover bg-center h-64 mb-6 flex items-center justify-center">
+        <img
+          src="breadcrumb.jpeg" // Replace with your image path
+          alt="Water Park" // Add a relevant alt text
+          className="absolute inset-0 object-cover w-full h-full"
+        />
+        <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+        <div className="relative text-center text-white px-6">
+          <h1 className="text-4xl font-bold mb-4 text-white">Waterparks</h1>
+
+        </div>
+      </div>
 
         {loading ? (
           <div className="flex justify-center items-center h-80">
