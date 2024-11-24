@@ -75,7 +75,7 @@ export default function UserHome() {
   };
 
   return (
-    <>
+    <div className="pb-24">
       <img
         src="whatsapp.png"
         alt="WhatsApp Logo"
@@ -226,6 +226,6 @@ export default function UserHome() {
           </Stack>
         </Paper>
       </Stack>
-    </>
+    </div>
   );
 }
