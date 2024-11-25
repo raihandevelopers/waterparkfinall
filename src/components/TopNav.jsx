@@ -36,21 +36,55 @@ const TopBar = () => {
 
         {/* Right Section */}
         <div className="flex items-center space-x-4 p-2">
-          <a href="https://www.facebook.com/" className="text-sm hover:text-gray-300">
-            <FontAwesomeIcon icon={faFacebook} size="xl" />
-          </a>
-          <a href="https://wa.me/9146869202" className="text-sm hover:text-gray-300">
-            <FontAwesomeIcon icon={faWhatsapp} size="xl" />
-          </a>
-          <a href="https://instagram.com/waterpark_chalo?igshid=OGQ5ZDc2ODk2ZA==" className="text-sm hover:text-gray-300">
-            <FontAwesomeIcon icon={faInstagram} size="xl" />
-          </a>
-          <a href="https://www.youtube.com/@Waterparkchalo" className="text-sm hover:text-gray-300">
-            <FontAwesomeIcon icon={faYoutube} size="xl" />
-          </a>
-        </div>
-      </div>
+        <a
+  href="https://www.facebook.com/profile.php?id=61568891087635&mibextid=ZbWKwL"
+  className="text-sm hover:text-gray-300 cursor-pointer"
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  <FontAwesomeIcon icon={faFacebook} size="xl" />
+</a>
+<a
+  href="https://wa.me/9146869202"
+  className="text-sm hover:text-gray-300 cursor-pointer"
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  <FontAwesomeIcon icon={faWhatsapp} size="xl" />
+</a>
+<a
+  href="https://instagram.com/waterpark_chalo?igshid=OGQ5ZDc2ODk2ZA=="
+  className="text-sm hover:text-gray-300 cursor-pointer"
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  <FontAwesomeIcon icon={faInstagram} size="xl" />
+</a>
+<a
+  href="https://www.youtube.com/@Waterparkchalo"
+  className="text-sm hover:text-gray-300 cursor-pointer"
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  <FontAwesomeIcon icon={faYoutube} size="xl" />
+</a>
     </div>
+      </div>
+      <div className="">
+      <a
+  href="https://www.facebook.com/profile.php?id=61568891087635&mibextid=ZbWKwL"
+  target="_blank"
+  rel="noopener noreferrer"
+  style={{ visibility: "hidden" }}
+>
+  <FontAwesomeIcon icon={faFacebook} size="xl" />
+</a>
+
+</div>
+
+    </div>
+
+    
   );
 };
 
