@@ -36,7 +36,7 @@ const WaterparkTicket = () => {
         {/* Ticket Header */}
         <div className="relative bg-[#fff] text-white text-center py-4">
           <h1 className="text-lg font-bold">Creating Memories</h1>
-          <p className="text-sm italic text-black">One Adventure at a Time with MRB</p>
+          <p className="text-sm italic text-black">One Adventure at a Time with Waterparkchalo</p>
           <div className="absolute top-2 right-2">
             <img src="/logo.png" alt="Logo" className="h-10" />
           </div>
@@ -103,7 +103,21 @@ const WaterparkTicket = () => {
             </p>
           </div> */}
 
-            <h3 className="font-bold text-center">Pay on Waterpark - ₹{booking.totalPrice}/-</h3>
+<h3
+  className="font-bold text-center border border-[#234778] rounded"
+  style={{
+    padding: "10px",
+    lineHeight: "1.2",
+    height: "50px", // Adjust as needed to ensure the text is perfectly centered
+    margin: 0,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  }}
+>
+  Pay on Waterpark - ₹{booking.totalPrice}/-
+</h3>
+
         </div>
       </div>
     </div>
