@@ -53,9 +53,13 @@ const WaterparkTicket = () => {
 
         {/* Main Ticket Content */}
         <div className="p-4 text-gray-800">
-          <h2 className="text-center text-xl font-bold text-blue-800 mb-4">
-            {booking.waterparkName}
-          </h2>
+        <h2
+  className="text-center text-xl font-bold text-blue-800 mb-4"
+  style={{ textDecoration: "none", border: "none", margin: 0, padding: 0 }}
+>
+  {booking.waterparkName}
+</h2>
+
 
           <div className="grid grid-cols-2 gap-4 mb-4">
             <p>
