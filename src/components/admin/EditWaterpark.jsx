@@ -147,12 +147,13 @@ const EditWaterpark = () => {
         <div>
           <label className="block font-semibold">Discount Percentage</label>
           <input
-            type="number"
-            name="discountPrice"
-            value={formData.discountPercentage}
-            onChange={handleChange}
-            className="border w-full p-2 rounded"
-          />
+  type="number"
+  name="discountPercentage"
+  value={formData.discountPercentage}
+  onChange={handleChange}
+  className="border w-full p-2 rounded"
+/>
+
         </div>
 
         {/* Advance Amount */}
