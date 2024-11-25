@@ -85,15 +85,12 @@ function AddWaterpark() {
       data.append("images", image);
     });
   
-    try {
+     try {
       const response = await axios.post(
         `${import.meta.env.VITE_SERVER_URL}/api/waterparks/add-waterpark`,
         data,
-         headers: {
-    'Content-Type': 'multipart/form-data', // Required for file uploads
-  },
-  withCredentials: true, // If your backend requires cookies/auth
-});
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
       if(response.status == 201){
         toast.success(response.data.message);
       }
