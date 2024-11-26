@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useRef } from 'react';
 
 import { Stack, Button, Typography, TextField, } from '@mui/material';
 import { NavLink, useNavigate } from 'react-router-dom';
+import Review from "./Review";
+import { Dialog, DialogActions, DialogContent } from '@mui/material';
 
 import { useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -17,6 +19,8 @@ const Resorts = () => {
   const navigate = useNavigate();
   const [minDate, setMinDate] = useState("");
   const [faqIndex, setFaqIndex] = useState(null);
+  
+  const dateInputRef = useRef(null); // Create a ref for the date input
 
   const Navlocation = useLocation();
   const { resort } = Navlocation.state || {};
@@ -33,15 +37,23 @@ const Resorts = () => {
     excluded = [],
     map,
     faqs = [],
+    reviews,
     images = [],
   } = resort;
   console.log(resort)
 
+  
   useEffect(() => {
-    // Set today's date in YYYY-MM-DD format
-    const today = new Date().toISOString().split("T")[0];
+    // Set today's date in YYYY-MM-DD format for the minimum selectable date
+    const today = new Date().toISOString().split('T')[0];
     setMinDate(today);
+
+    // Automatically focus the date input when the component mounts
+    if (dateInputRef.current) {
+      dateInputRef.current.focus();
+    }
   }, []);
+
 
 
   const [adultCount, setAdultCount] = useState(1);
@@ -49,6 +61,8 @@ const Resorts = () => {
 
   const [pickup, setPickup] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [currentDate, setCurrentDate] = useState(new Date()); // Current date for month navigation
+
 
   const adultPrice = resort.adultPrice | resort.price;
   const childPrice = resort.childPrice | resort.price;
@@ -76,9 +90,69 @@ const Resorts = () => {
     setChildCount((prev) => Math.max(0, prev + increment));
   };
 
-  const handleDateSelect = (day) => {
-    setSelectedDate(day);
+
+
+  // Function to format the month and year (e.g., "October 2024")
+  const formatMonthYear = (date) => {
+    return date.toLocaleString('default', { month: 'long', year: 'numeric' });
   };
+
+  // Function to generate days for the current month
+  const generateDaysOfMonth = (date) => {
+    const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+    const endOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    const daysArray = [];
+    for (let i = 1; i <= endOfMonth.getDate(); i++) {
+      const day = new Date(date.getFullYear(), date.getMonth(), i);
+      daysArray.push({
+        day: i,
+        isPast: day < new Date(),
+      });
+    }
+    return daysArray;
+  };
+    // Function to retrieve the selected date from localStorage
+  const retrieveSelectedDate = () => {
+    const storedDate = localStorage.getItem('selectedDate');
+    if (storedDate) {
+      setSelectedDate(new Date(storedDate));  // Set the stored date in state
+    }
+  };
+
+  // Save selected date to localStorage
+  const saveSelectedDateToLocalStorage = (date) => {
+    localStorage.setItem('selectedDate', date);  // Save the date to localStorage
+  };
+
+  const handleDateSelect = (day) => {
+    const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+  
+    // Clear the previous selected date if a new date is selected
+    if (selectedDate && selectedDate.getTime() === newDate.getTime()) {
+      return; // Prevent updating if the selected date is clicked again
+    }
+  
+    setSelectedDate(newDate);  // Update the selected date state
+    saveSelectedDateToLocalStorage(newDate);  // Save it to localStorage
+  };
+  
+  // Functions for month navigation
+  const goToPreviousMonth = () => {
+    const newDate = new Date(currentDate);
+    newDate.setMonth(newDate.getMonth() - 1);
+    setCurrentDate(newDate);
+    setDays(generateDaysOfMonth(newDate));  // Update days when changing months
+  };
+  
+  const goToNextMonth = () => {
+    const newDate = new Date(currentDate);
+    newDate.setMonth(newDate.getMonth() + 1);
+    setCurrentDate(newDate);
+    setDays(generateDaysOfMonth(newDate));  // Update days when changing months
+  };
+  
+  const [days, setDays] = useState(generateDaysOfMonth(currentDate));  // Use generateDaysOfMonth
+
 
   // Calculate discounted prices
   const discountedAdultPrice = resort.discountPercentage > 0
@@ -105,8 +179,16 @@ const Resorts = () => {
     localStorage.setItem('childCount', childCount);
     localStorage.setItem('total', dtotal);
     localStorage.setItem('pickup', pickup);
-    if (selectedDate) localStorage.setItem('selectedDate', selectedDate);
+    retrieveSelectedDate();
   }, [adultCount, childCount, pickup, selectedDate, dtotal]);
+
+  useEffect(() => {
+    if (selectedDate) {
+      // Clear the previous selection in localStorage if a new date is selected
+      localStorage.setItem('selectedDate', selectedDate.toISOString());
+    }
+  }, [selectedDate]);
+  
 
   const handleAdultChange = (increment) => {
     setAdultCount((prev) => Math.max(0, prev + increment));
@@ -207,8 +289,11 @@ const Resorts = () => {
           {/* Description Tab */}
           {activeTab === 'Description' && (
             <div className="attractions-list2">
-              <p className="w-full">{resort?.description}</p>
-              {/* Adult Price */}
+<div
+      className="w-full"
+      dangerouslySetInnerHTML={{ __html: resort?.description }}
+    />
+             {/* Adult Price */}
               {resort?.adultPrice && (
                 <p>
                   <strong>Adult Price:</strong>{' '}
@@ -318,6 +403,39 @@ const Resorts = () => {
           )}
 
 
+{activeTab === 'Reviews' && (
+            <div className="faq-list space-y-4">
+              {resort?.reviews?.length > 0 ? (
+                resort.reviews.map((faq, index) => (
+                  <div
+                    key={index}
+                    className="faq-item border border-gray-200 rounded-lg p-4 shadow-sm bg-white"
+                  >
+                    <div className="flex justify-between items-center cursor-pointer"
+                      onClick={() => setFaqIndex(reviews === index ? null : index)}>
+                      <span className="font-medium text-gray-800 flex gap-2">
+                        {reviews.question}
+                      </span>
+                      <span
+                        className={`transition-transform ${reviews === index ? 'rotate-180' : ''
+                          }`}
+                      >
+                        ▼
+                      </span>
+                    </div>
+                    {reviews === index && (
+                      <p className="mt-2 text-gray-600">{reviews.answer}</p>
+                    )}
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-600">No reviews available.</p>
+              )}
+            </div>
+          )}
+
+
+
           {/* Map Tab */}
           {activeTab === 'Map' && (
             <div className="attractions-list">
@@ -339,42 +457,46 @@ const Resorts = () => {
         </div>
 
         <div className="booking-container py-3">
-          <h2>Select Booking Date</h2>
-          {/* <div className="calendar">
-        {[...Array(30)].map((_, i) => {
-          const day = i + 1;
-          const isSelected = selectedDate === day;
-          return (
-            <div
-              key={i}
-              className={`calendar-day ${isSelected ? 'selected' : ''}`}
-              onClick={() => handleDateSelect(day)}
-            >
-              {day}
-            </div>
-          );
-        })}
+        <h2>Select Booking Date</h2>
+      
+      {/* Month Navigation */}
+      <div className="month-navigation flex justify-between items-center mb-4">
+        <button onClick={goToPreviousMonth} className="text-lg font-bold">←</button>
+        <h3 className="text-xl">{formatMonthYear(currentDate)}</h3>
+        <button onClick={goToNextMonth} className="text-lg font-bold">→</button>
+      </div>
+
+      <div className="calendar grid grid-cols-7 gap-2">
+        {days.map(({ day, isPast }, index) => (
+          <div
+            key={index}
+            className={`calendar-day ${selectedDate && selectedDate.getDate() === day ? 'selected' : ''} ${isPast ? 'text-gray-400 cursor-not-allowed' : ''}`}
+            onClick={() => !isPast && handleDateSelect(day)} // Disable past date selection
+          >
+            {day}
+          </div>
+        ))}
+      </div>
+{/* <div className="flex flex-col items-center space-y-4">
+      <label htmlFor="date" className="text-sm text-gray-700">Select Date:</label>
+      <div className="relative w-full max-w-xs">
+        <input
+          id="date"
+          type="date"
+          value={date}
+          min={minDate}
+          onChange={(e) => setDate(e.target.value)}
+          ref={dateInputRef} // Assign the ref to the date input
+          className={`w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${!date ? 'text-gray-400' : 'text-black'}`}
+        />
+        {!date && (
+          <span className="absolute inset-y-0 left-3 flex items-center text-gray-400 pointer-events-none sm:hidden">
+            dd/mm/yyyy
+          </span>
+        )}
+      </div>
       </div> */}
 
-          <div className="flex flex-col items-center space-y-4">
-            <label htmlFor="date" className="text-sm text-gray-700">Select Date:</label>
-            <div className="relative w-full max-w-xs">
-              <input
-                id="date"
-                type="date"
-                value={date}
-                min={minDate}
-                onChange={(e) => setDate(e.target.value)}
-                className={`w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${!date ? 'text-gray-400' : 'text-black'
-                  }`}
-              />
-              {!date && (
-                <span className="absolute inset-y-0 left-3 flex items-center text-gray-400 pointer-events-none sm:hidden">
-                  dd/mm/yyyy
-                </span>
-              )}
-            </div>
-          </div>
 
 
 
@@ -399,8 +521,8 @@ const Resorts = () => {
             <h3>Booking Summary</h3>
             <div className="summary-item">
               <span>Selected Date:</span>
-              <span>{date ? new Date(date).toDateString() : 'Not Selected'}</span>
-            </div>
+              <span>{selectedDate ? new Date(selectedDate).toDateString() : 'Not Selected'}</span>
+              </div>
             <div className="summary-item">
               <span>Adult ({adultCount})</span>
               <span>₹{adultCount * discountedAdultPrice}</span>
@@ -427,135 +549,14 @@ const Resorts = () => {
             </div>
           </div>
 
-          <div className="pickup-option">
-            <input
-              type="checkbox"
-              checked={pickup}
-              onChange={() => setPickup(!pickup)}
-            />
-            <label>Pickup & Drop Service</label>
-          </div>
+          <div className="pickup-option text-left">
+  <p>Pickup and Drop Service - ₹100 per person</p>
+</div>
 
 
 
-          {/* <div >
-          <Stack sx={{ width: '100%', display: 'flex', justifyContent: "center", alignItems: 'center', height: "100dvh", background: "white", height: "fit-content", marginTop: "20px", marginBottom: "50px" }}>
-            <Stack sx={{ display: "flex", flexDirection: "row", width: { xs: '100%', sm: '85%', md: '80%' }, height: { xs: "fit-content", sm: "90dvh", md: '90dvh' }, borderRadius: '8px', border: { xs: "2px solid white", sm: "none" }, zIndex: "0" }}>
-              <form onSubmit={handleSubmit} style={{ width: '100%', padding: '1.5rem', height: 'inherit', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', gap: '8px', zIndex: '200' }}>
-                <Typography variant="h3" sx={{ color: 'black', fontWeight: 'bolder', fontFamily: 'Poppins, sans-serif', borderBottom: '4px solid black', paddingBottom: '0.25rem', borderRadius: '2px' }}>Sign Up</Typography>
-                <Stack sx={{ width: '100%' }}>
-                  <TextField
-                    required
-                    label="Full Name"
-                    name="full name"
-                    type="text"
 
-                    placeholder="Enter full name"
-                    onChange={(e) => setFname(e.target.value)}
-                    InputLabelProps={{ sx: { color: "black", fontSize: { xs: "1.5rem", md: "16px" } } }}
-                    sx={{
-                      '& .MuiInputBase-input': { color: 'black', fontSize: { xs: "1.5rem", md: "16px" } },
-                      '& .MuiInput-underline:before': { borderBottomColor: 'black' },
-                      '& .MuiInput-underline:hover:not(.Mui-disabled):before': { borderBottomColor: '#00CED1' },
-                    }}
-                    variant="standard"
-                  />
-                </Stack>
-
-                <Stack sx={{ width: '100%' }}>
-                  <TextField
-                    required
-                    fullWidth
-                    id="outlined-required"
-                    label="Email Address"
-                    name="email"
-                    type="email"
-                    placeholder="Enter email"
-                    onChange={(e) => setEmail(e.target.value)}
-                    InputLabelProps={{ sx: { color: "black", fontSize: { xs: "1.5rem", md: "16px" } } }}
-                    sx={{
-                      '& .MuiInputBase-input': { color: 'black', fontSize: { xs: "1.5rem", md: "16px" } },
-                      '& .MuiInput-underline:before': { borderBottomColor: 'black' },
-                      '& .MuiInput-underline:hover:not(.Mui-disabled):before': { borderBottomColor: '#00CED1' },
-                      '& .MuiInput-underline:after': { borderBottomColor: 'black' },
-                    }}
-                    variant="standard"
-                  />
-                </Stack>
-
-                <Stack gap={2} sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-                  <TextField
-                    required
-                    fullWidth
-                    id="outlined-required"
-                    label="Phone Number"
-                    name="Phno"
-                    type="number"
-                    placeholder="Enter Phone number"
-                    onChange={(e) => setPnum(e.target.value)}
-                    InputLabelProps={{ sx: { color: "black", fontSize: { xs: "1.5rem", md: "16px" } } }}
-                    sx={{
-                      '& .MuiInputBase-input': { color: 'black', fontSize: { xs: "1.5rem", md: "16px" } },
-                      '& .MuiInput-underline:before': { borderBottomColor: 'black' },
-                      '& .MuiInput-underline:hover:not(.Mui-disabled):before': { borderBottomColor: '#00CED1' },
-                      '& .MuiInput-underline:after': { borderBottomColor: 'black' },
-                    }}
-                    variant="standard"
-                  />
-                </Stack>
-
-                <Stack sx={{ width: '100%' }}>
-                  <TextField
-                    required
-                    fullWidth
-                    id="outlined-required"
-                    label="Password"
-                    name="password"
-                    type="password"
-                    placeholder="Enter password"
-                    onChange={(e) => setPassword(e.target.value)}
-                    InputLabelProps={{ sx: { color: "black", fontSize: { xs: "1.5rem", md: "16px" } } }}
-                    sx={{
-                      '& .MuiInputBase-input': { color: 'black', fontSize: { xs: "1.5rem", md: "16px" } },
-                      '& .MuiInput-underline:before': { borderBottomColor: 'black' },
-                      '& .MuiInput-underline:hover:not(.Mui-disabled):before': { borderBottomColor: '#00CED1' },
-                      '& .MuiInput-underline:after': { borderBottomColor: 'black' },
-                    }}
-                    variant="standard"
-                  />
-                </Stack>
-                <Stack sx={{ width: '100%' }}>
-                  <Button
-                    variant="contained"
-                    sx={{
-                      background: "#00CED1",
-                      color: 'black',
-                      padding: '8px 0px',
-                      borderRadius: '.75rem',
-                      fontSize: { xs: "1.15rem", md: "16px" },
-                      '&:hover': {
-                        transform: "scale(1.001)",
-                        background: 'white',
-                        color: "#00ced1",
-                        fontWeight: "500",
-                        border: ".125rem solid #00ced1",
-                      },
-                    }}
-                    type="submit"
-                  >
-                    Sign Up and Book
-                  </Button>
-
-                </Stack>
-                <Typography sx={{ color: 'black', textAlign: 'center' }}>
-                  Returning Customer? <NavLink to="/sign-in" style={{ color: '#00CED1' }}>Sign in</NavLink>
-                </Typography>
-              </form>
-            </Stack>
-          </Stack>
-
-
-        </div> */}
+       
           <button onClick={handleCheckout} // Navigate to /checkout
             className='px-4 py-2 w-full rounded-xl bg-[#0156b3] text-white font-semibold my-10'>Continue Booking</button>
         </div>

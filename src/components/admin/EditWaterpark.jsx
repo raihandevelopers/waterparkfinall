@@ -11,16 +11,16 @@ const EditWaterpark = () => {
     name: "",
     location: "",
     description: "",
-    adultPrice:0 ,
+    adultPrice: 0,
     childPrice: 0,
     discountPercentage: 0,
     advanceAmount: "",
     weekendPriceIncrease: "",
     map: "",
-    images: "",
+    images: [],
     included: [],
     excluded: [],
-    faqs: [],
+    faqs: [{ question: "", answer: "" }],
   });
 
   useEffect(() => {
@@ -38,28 +38,55 @@ const EditWaterpark = () => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
+
   const addItem = (field) => {
     setFormData({
       ...formData,
-      [field]: [...formData[field], ""], // Add a new empty string to the array
+      [field]: [...formData[field], ""],
     });
   };
-  
+
   const removeItem = (field, index) => {
-    const updatedArray = formData[field].filter((_, i) => i !== index); // Remove the item at the given index
+    const updatedArray = formData[field].filter((_, i) => i !== index);
     setFormData({ ...formData, [field]: updatedArray });
   };
-  
+
   const handleArrayChange = (e, field, index) => {
     const { value } = e.target;
     const updatedArray = [...formData[field]];
     updatedArray[index] = value;
     setFormData({ ...formData, [field]: updatedArray });
   };
-  
+
+  const handleFaqChange = (e, index, field) => {
+    const { value } = e.target;
+    const updatedFaqs = [...formData.faqs];
+    updatedFaqs[index][field] = value;
+    setFormData({ ...formData, faqs: updatedFaqs });
+  };
+
+  // Handle image file change
+  const handleImageChange = (e) => {
+    const files = e.target.files;
+    const updatedImages = [...formData.images];
+
+    // Convert the files to URLs and update the state
+    Array.from(files).forEach((file) => {
+      const fileURL = URL.createObjectURL(file);
+      updatedImages.push(fileURL);
+    });
+
+    setFormData({ ...formData, images: updatedImages });
+  };
+
+  // Remove image from the list
+  const removeImage = (index) => {
+    const updatedImages = formData.images.filter((_, i) => i !== index);
+    setFormData({ ...formData, images: updatedImages });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData)
     axios
       .put(`${import.meta.env.VITE_SERVER_URL}/api/waterparks/${id}`, formData)
       .then((response) => {
@@ -73,6 +100,7 @@ const EditWaterpark = () => {
         console.error("Error updating waterpark:", error);
       });
   };
+
 
   return (
     <div className="p-4">
@@ -192,21 +220,41 @@ const EditWaterpark = () => {
           />
         </div>
 
-        {/* Images URL */}
-        <div>
+               {/* Images URL */}
+               <div>
           <label className="block font-semibold">Images</label>
           <div className="flex flex-wrap gap-4">
+            {/* Display existing images */}
             {formData.images && formData.images.length > 0 ? (
               formData.images.map((image, index) => (
                 <div key={index} className="relative">
-                  <img src={image} alt={`Waterpark Image ${index + 1}`} className="w-32 h-32 object-cover rounded" />
+                  <img
+                    src={image}
+                    alt={`Waterpark Image ${index + 1}`}
+                    className="w-32 h-32 object-cover rounded"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeImage(index)}
+                    className="absolute top-0 right-0 bg-red-500 text-white p-2 rounded-full"
+                  >
+                    X
+                  </button>
                 </div>
               ))
             ) : (
               <p>No images available</p>
             )}
           </div>
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleImageChange}
+            className="border w-full p-2 rounded mt-2"
+          />
         </div>
+
 
 {/* Included */}
 <div>
@@ -267,6 +315,49 @@ const EditWaterpark = () => {
     className="bg-blue-500 text-white p-2 rounded mt-2"
   >
     Add Item
+  </button>
+</div>
+
+{/* FAQ */}
+<div>
+  <label className="block font-semibold">FAQs</label>
+  {formData.faqs.map((item, index) => (
+    <div key={index} className="space-y-2 mb-4">
+      <div className="flex items-center space-x-2">
+        <input
+          type="text"
+          name="question"
+          value={item.question}
+          onChange={(e) => handleFaqChange(e, index, "question")}
+          className="border w-full p-2 rounded"
+          placeholder="Enter question"
+        />
+      </div>
+      <div className="flex items-center space-x-2">
+        <input
+          type="text"
+          name="answer"
+          value={item.answer}
+          onChange={(e) => handleFaqChange(e, index, "answer")}
+          className="border w-full p-2 rounded"
+          placeholder="Enter answer"
+        />
+      </div>
+      <button
+        type="button"
+        onClick={() => removeItem("faqs", index)}
+        className="bg-red-500 text-white p-2 rounded mt-2"
+      >
+        Remove FAQ
+      </button>
+    </div>
+  ))}
+  <button
+    type="button"
+    onClick={() => addItem("faqs")}
+    className="bg-blue-500 text-white p-2 rounded mt-2"
+  >
+    Add FAQ
   </button>
 </div>
 

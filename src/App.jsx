@@ -12,6 +12,8 @@ import Influencers from './components/Influencers'
 import Resorts from './components/Resorts'
 import Login from './components/Login'
 import CheckoutPage from './components/Checkout.jsx'
+import Review from './components/Review.jsx'
+
 import PrivacyPolicy from './components/PrivacyPolicy.jsx'
 
 import AdminLayout from './components/admin/Admin.jsx'; // Admin Navigation Layout
@@ -41,6 +43,7 @@ function App() {
           <Route path="contact" element={<Contact />} />
           <Route path="about" element={<About />} />
           <Route path="waterparks" element={<Farmvilla />} />
+          <Route path="review" element={<Review />} />
           <Route path="gallery" element={<Influencers />} />
           <Route path="resorts" element={<Resorts />} />
           <Route path="checkout" element={<CheckoutPage />} />

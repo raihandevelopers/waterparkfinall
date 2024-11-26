@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from 'react-router-dom';
+import "react-quill/dist/quill.snow.css"; // Import styles
+import ReactQuill from "react-quill";
 
 function AddWaterpark() {
   const [formData, setFormData] = useState({
@@ -25,6 +27,10 @@ function AddWaterpark() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleDescriptionChange = (value) => {
+    setFormData((prev) => ({ ...prev, description: value }));
   };
 
   const handleFaqChange = (index, field, value) => {
@@ -134,7 +140,6 @@ function AddWaterpark() {
       <form onSubmit={handleSubmit} className="space-y-4">
         {[
           { label: "Name", name: "name", type: "text" },
-          { label: "Description", name: "description", type: "text" },
           { label: "Location", name: "location", type: "text" },
           { label: "Google Maps Link", name: "map", type: "text" },
           { label: "Adult Price", name: "adultPrice", type: "number" },
@@ -159,6 +164,16 @@ function AddWaterpark() {
             />
           </div>
         ))}
+
+<div>
+          <label className="block text-gray-700 mb-1">Description</label>
+          <ReactQuill
+            value={formData.description}
+            onChange={handleDescriptionChange}
+            className="border rounded-lg"
+            theme="snow"
+          />
+        </div>
 
         {[
           { label: "Included", list: included, setList: setIncluded },
