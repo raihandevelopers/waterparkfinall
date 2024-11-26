@@ -1,4 +1,4 @@
-import React, { useEffect, useState,useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 import { Stack, Button, Typography, TextField, } from '@mui/material';
 import { NavLink, useNavigate } from 'react-router-dom';
@@ -7,6 +7,8 @@ import { Dialog, DialogActions, DialogContent } from '@mui/material';
 
 import { useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import 'react-calendar/dist/Calendar.css';
+import Calendar from 'react-calendar';
 
 const Resorts = () => {
   const [fname, setFname] = useState("");
@@ -19,7 +21,7 @@ const Resorts = () => {
   const navigate = useNavigate();
   const [minDate, setMinDate] = useState("");
   const [faqIndex, setFaqIndex] = useState(null);
-  
+  const [value, setValue] = useState(new Date());
   const dateInputRef = useRef(null); // Create a ref for the date input
 
   const Navlocation = useLocation();
@@ -40,9 +42,7 @@ const Resorts = () => {
     reviews,
     images = [],
   } = resort;
-  console.log(resort)
 
-  
   useEffect(() => {
     // Set today's date in YYYY-MM-DD format for the minimum selectable date
     const today = new Date().toISOString().split('T')[0];
@@ -75,12 +75,12 @@ const Resorts = () => {
     const savedChildCount = localStorage.getItem('childCount');
 
     const savedPickup = localStorage.getItem('pickup') === 'true';
-    const savedSelectedDate = localStorage.getItem('selectedDate');
+    // const savedSelectedDate = localStorage.getItem('selectedDate');
 
     if (savedAdultCount) setAdultCount(parseInt(savedAdultCount));
     if (savedChildCount) setChildCount(parseInt(savedChildCount));
 
-    if (savedSelectedDate) setSelectedDate(parseInt(savedSelectedDate));
+    // if (savedSelectedDate) setSelectedDate(parseInt(savedSelectedDate));
     setPickup(savedPickup);
   }, []);
 
@@ -90,7 +90,19 @@ const Resorts = () => {
     setChildCount((prev) => Math.max(0, prev + increment));
   };
 
-
+  const handleChange = (value) => {
+    console.log(value);
+  
+    // Get the local date as "YYYY-MM-DD"
+    const formattedDate = value.getFullYear() + '-' 
+                         + String(value.getMonth() + 1).padStart(2, '0') + '-'
+                         + String(value.getDate()).padStart(2, '0');
+  
+    setValue(value); // Update state with the full date object
+    setSelectedDate(formattedDate); // Store the formatted date as a string
+    saveSelectedDateToLocalStorage(formattedDate); // Save the formatted date to localStorage
+  };
+  
 
   // Function to format the month and year (e.g., "October 2024")
   const formatMonthYear = (date) => {
@@ -111,7 +123,7 @@ const Resorts = () => {
     }
     return daysArray;
   };
-    // Function to retrieve the selected date from localStorage
+  // Function to retrieve the selected date from localStorage
   const retrieveSelectedDate = () => {
     const storedDate = localStorage.getItem('selectedDate');
     if (storedDate) {
@@ -124,33 +136,7 @@ const Resorts = () => {
     localStorage.setItem('selectedDate', date);  // Save the date to localStorage
   };
 
-  const handleDateSelect = (day) => {
-    const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
-  
-    // Clear the previous selected date if a new date is selected
-    if (selectedDate && selectedDate.getTime() === newDate.getTime()) {
-      return; // Prevent updating if the selected date is clicked again
-    }
-  
-    setSelectedDate(newDate);  // Update the selected date state
-    saveSelectedDateToLocalStorage(newDate);  // Save it to localStorage
-  };
-  
-  // Functions for month navigation
-  const goToPreviousMonth = () => {
-    const newDate = new Date(currentDate);
-    newDate.setMonth(newDate.getMonth() - 1);
-    setCurrentDate(newDate);
-    setDays(generateDaysOfMonth(newDate));  // Update days when changing months
-  };
-  
-  const goToNextMonth = () => {
-    const newDate = new Date(currentDate);
-    newDate.setMonth(newDate.getMonth() + 1);
-    setCurrentDate(newDate);
-    setDays(generateDaysOfMonth(newDate));  // Update days when changing months
-  };
-  
+
   const [days, setDays] = useState(generateDaysOfMonth(currentDate));  // Use generateDaysOfMonth
 
 
@@ -179,16 +165,9 @@ const Resorts = () => {
     localStorage.setItem('childCount', childCount);
     localStorage.setItem('total', dtotal);
     localStorage.setItem('pickup', pickup);
-    retrieveSelectedDate();
+    // retrieveSelectedDate();
   }, [adultCount, childCount, pickup, selectedDate, dtotal]);
 
-  useEffect(() => {
-    if (selectedDate) {
-      // Clear the previous selection in localStorage if a new date is selected
-      localStorage.setItem('selectedDate', selectedDate.toISOString());
-    }
-  }, [selectedDate]);
-  
 
   const handleAdultChange = (increment) => {
     setAdultCount((prev) => Math.max(0, prev + increment));
@@ -221,14 +200,14 @@ const Resorts = () => {
   }, [currentIndex]); // Re-run the effect if currentIndex changes
 
   const handleCheckout = () => {
-    if (!date) {
+    if (!selectedDate) {
       toast.error('Please select a date');
       return;
     }
     const data = {
       adultCount: adultCount,
       childCount: childCount,
-      date: date,
+      date: selectedDate,
       resortName: resort.name,
       subtotal: subtotal,
       deposit: pickup ? dtotal + 50 : dtotal,
@@ -289,11 +268,11 @@ const Resorts = () => {
           {/* Description Tab */}
           {activeTab === 'Description' && (
             <div className="attractions-list2">
-<div
-      className="w-full"
-      dangerouslySetInnerHTML={{ __html: resort?.description }}
-    />
-             {/* Adult Price */}
+              <div
+                className="w-full"
+                dangerouslySetInnerHTML={{ __html: resort?.description }}
+              />
+              {/* Adult Price */}
               {resort?.adultPrice && (
                 <p>
                   <strong>Adult Price:</strong>{' '}
@@ -403,7 +382,7 @@ const Resorts = () => {
           )}
 
 
-{activeTab === 'Reviews' && (
+          {activeTab === 'Reviews' && (
             <div className="faq-list space-y-4">
               {resort?.reviews?.length > 0 ? (
                 resort.reviews.map((faq, index) => (
@@ -457,45 +436,10 @@ const Resorts = () => {
         </div>
 
         <div className="booking-container py-3">
-        <h2>Select Booking Date</h2>
-      
-      {/* Month Navigation */}
-      <div className="month-navigation flex justify-between items-center mb-4">
-        <button onClick={goToPreviousMonth} className="text-lg font-bold">←</button>
-        <h3 className="text-xl">{formatMonthYear(currentDate)}</h3>
-        <button onClick={goToNextMonth} className="text-lg font-bold">→</button>
-      </div>
-
-      <div className="calendar grid grid-cols-7 gap-2">
-        {days.map(({ day, isPast }, index) => (
-          <div
-            key={index}
-            className={`calendar-day ${selectedDate && selectedDate.getDate() === day ? 'selected' : ''} ${isPast ? 'text-gray-400 cursor-not-allowed' : ''}`}
-            onClick={() => !isPast && handleDateSelect(day)} // Disable past date selection
-          >
-            {day}
+          <h2>Select Booking Date</h2>
+          <div className="flex justify-center">
+            <Calendar onChange={handleChange} value={value} minDate={new Date()} />
           </div>
-        ))}
-      </div>
-{/* <div className="flex flex-col items-center space-y-4">
-      <label htmlFor="date" className="text-sm text-gray-700">Select Date:</label>
-      <div className="relative w-full max-w-xs">
-        <input
-          id="date"
-          type="date"
-          value={date}
-          min={minDate}
-          onChange={(e) => setDate(e.target.value)}
-          ref={dateInputRef} // Assign the ref to the date input
-          className={`w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${!date ? 'text-gray-400' : 'text-black'}`}
-        />
-        {!date && (
-          <span className="absolute inset-y-0 left-3 flex items-center text-gray-400 pointer-events-none sm:hidden">
-            dd/mm/yyyy
-          </span>
-        )}
-      </div>
-      </div> */}
 
 
 
@@ -522,7 +466,7 @@ const Resorts = () => {
             <div className="summary-item">
               <span>Selected Date:</span>
               <span>{selectedDate ? new Date(selectedDate).toDateString() : 'Not Selected'}</span>
-              </div>
+            </div>
             <div className="summary-item">
               <span>Adult ({adultCount})</span>
               <span>₹{adultCount * discountedAdultPrice}</span>
@@ -550,13 +494,13 @@ const Resorts = () => {
           </div>
 
           <div className="pickup-option text-left">
-  <p>Pickup and Drop Service - ₹100 per person</p>
-</div>
+            <p>Pickup and Drop Service - ₹100 per person</p>
+          </div>
 
 
 
 
-       
+
           <button onClick={handleCheckout} // Navigate to /checkout
             className='px-4 py-2 w-full rounded-xl bg-[#0156b3] text-white font-semibold my-10'>Continue Booking</button>
         </div>
