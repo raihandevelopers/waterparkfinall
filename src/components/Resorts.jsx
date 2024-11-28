@@ -23,9 +23,17 @@ const Resorts = () => {
   const [faqIndex, setFaqIndex] = useState(null);
   const [value, setValue] = useState(new Date());
   const dateInputRef = useRef(null); // Create a ref for the date input
+  const [newReview, setNewReview] = useState({
+    name: '',
+    email: '',
+    review: '',
+    rating: 0,
+  });
 
+  
   const Navlocation = useLocation();
   const { resort } = Navlocation.state || {};
+  const [reviews, setReviews] = useState(resort?.reviews || []);
 
   if (!resort) {
     return <p>No resort data available.</p>;
@@ -39,9 +47,11 @@ const Resorts = () => {
     excluded = [],
     map,
     faqs = [],
-    reviews,
+    reviewssection,
     images = [],
   } = resort;
+
+  
 
   useEffect(() => {
     // Set today's date in YYYY-MM-DD format for the minimum selectable date
@@ -69,12 +79,33 @@ const Resorts = () => {
   const dadultPrice = 100;
   const dchildPrice = 100;
 
+
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    // Check if all required fields are filled
+    if (!newReview.name || !newReview.email || !newReview.review || !newReview.rating) {
+      alert('Please fill all fields and provide a rating.');
+      return;
+    }
+  
+    // Update reviews state
+    setReviews((prevReviews) => [...prevReviews, newReview]);
+  
+    // Reset newReview state
+    setNewReview({ name: '', email: '', review: '', rating: 0 });
+  };
+    
+
   // Load data from localStorage when component mounts
   useEffect(() => {
     const savedAdultCount = localStorage.getItem('adultCount');
     const savedChildCount = localStorage.getItem('childCount');
 
     const savedPickup = localStorage.getItem('pickup') === 'true';
+
+    
     // const savedSelectedDate = localStorage.getItem('selectedDate');
 
     if (savedAdultCount) setAdultCount(parseInt(savedAdultCount));
@@ -84,11 +115,22 @@ const Resorts = () => {
     setPickup(savedPickup);
   }, []);
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewReview({ ...newReview, [name]: value });
+  };
 
+  const handleRatingChange = (rating) => {
+    setNewReview({ ...newReview, rating });
+  };
+
+  
 
   const handleChildChange = (increment) => {
     setChildCount((prev) => Math.max(0, prev + increment));
   };
+
+  
 
   const handleChange = (value) => {
     console.log(value);
@@ -200,23 +242,29 @@ const Resorts = () => {
   }, [currentIndex]); // Re-run the effect if currentIndex changes
 
   const handleCheckout = () => {
+    if (adultCount === 0 && childCount === 0) {
+      toast.error('Please select at least one adult or child.');
+      return;
+    }
+  
     if (!selectedDate) {
       toast.error('Please select a date');
       return;
     }
+  
     const data = {
       adultCount: adultCount,
       childCount: childCount,
       date: selectedDate,
       resortName: resort.name,
       subtotal: subtotal,
-      deposit: pickup ? dtotal + 50 : dtotal,
+      deposit: pickup ? dtotal + 100 : dtotal,
       resortId: resort._id,
     };
-
+  
     navigate('/checkout', { state: data });
   };
-
+  
   return (
     <>      <img
       src="whatsapp.png"
@@ -384,33 +432,85 @@ const Resorts = () => {
 
           {activeTab === 'Reviews' && (
             <div className="faq-list space-y-4">
-              {resort?.reviews?.length > 0 ? (
-                resort.reviews.map((faq, index) => (
-                  <div
-                    key={index}
-                    className="faq-item border border-gray-200 rounded-lg p-4 shadow-sm bg-white"
-                  >
-                    <div className="flex justify-between items-center cursor-pointer"
-                      onClick={() => setFaqIndex(reviews === index ? null : index)}>
-                      <span className="font-medium text-gray-800 flex gap-2">
-                        {reviews.question}
-                      </span>
-                      <span
-                        className={`transition-transform ${reviews === index ? 'rotate-180' : ''
-                          }`}
-                      >
-                        ▼
-                      </span>
-                    </div>
-                    {reviews === index && (
-                      <p className="mt-2 text-gray-600">{reviews.answer}</p>
-                    )}
-                  </div>
-                ))
-              ) : (
-                <p className="text-gray-600">No reviews available.</p>
-              )}
+              {resort?.reviewssection?.length > 0 ? (
+        reviews.map((review, index) => (
+          <div
+            key={index}
+            className="review-item border border-gray-200 rounded-lg p-4 shadow-sm bg-white mb-4"
+          >
+            <div className="flex justify-between items-center">
+              <span className="font-medium text-gray-800">{review.name}</span>
+              <div className="flex items-center">
+                {'★'.repeat(review.rating)}
+                {'☆'.repeat(5 - review.rating)}
+              </div>
             </div>
+            <p className="text-gray-600 mt-2">{review.review}</p>
+          </div>
+        ))
+      ) : (
+        <p className="text-gray-600">No reviews available.</p>
+      )}
+
+      <h3 className="text-lg font-bold mt-8">Add a Review</h3>
+      <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+        <div>
+          <label className="block font-medium">Your Rating *</label>
+          <div className="flex space-x-1">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <span
+                key={star}
+                className={`cursor-pointer ${star <= newReview.rating ? 'text-yellow-500' : 'text-gray-400'}`}
+                onClick={() => handleRatingChange(star)}
+              >
+                ★
+              </span>
+            ))}
+          </div>
+        </div>
+        <div>
+          <label className="block font-medium">Name *</label>
+          <input
+            type="text"
+            name="name"
+            value={newReview.name}
+            onChange={handleInputChange}
+            className="w-full border rounded p-2"
+            placeholder="Your name"
+            required
+          />
+        </div>
+        <div>
+          <label className="block font-medium">Email *</label>
+          <input
+            type="email"
+            name="email"
+            value={newReview.email}
+            onChange={handleInputChange}
+            className="w-full border rounded p-2"
+            placeholder="Your email"
+            required
+          />
+        </div>
+        <div>
+          <label className="block font-medium">Your Review *</label>
+          <textarea
+            name="review"
+            value={newReview.review}
+            onChange={handleInputChange}
+            className="w-full border rounded p-2"
+            placeholder="Write your review here"
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
+        >
+          Submit
+        </button>
+      </form>
+    </div>
           )}
 
 
@@ -481,7 +581,7 @@ const Resorts = () => {
             </div>
             <div className="summary-item">
               <span>Pickup & Drop</span>
-              <span>₹{pickup ? 50 : 0}</span>
+              <span>₹{pickup ? 100 : 0}</span>
             </div>
             <div className="summary-item total">
               <strong>Total Amt.:</strong>
@@ -489,13 +589,20 @@ const Resorts = () => {
             </div>
             <div className="summary-item total">
               <strong>Total downpayment:</strong>
-              <strong>₹{pickup ? dtotal + 50 : dtotal}</strong>
+              <strong>₹{pickup ? dtotal + 100 : dtotal}</strong>
             </div>
           </div>
 
-          <div className="pickup-option text-left">
-            <p>Pickup and Drop Service - ₹100 per person</p>
+
+          <div className="pickup-option">
+            <input
+            type='checkbox'
+              checked={pickup}
+              onChange={() => setPickup(!pickup)}
+            />
+            <label>Pickup & Drop Service 100rs per Person</label>
           </div>
+
 
 
 
