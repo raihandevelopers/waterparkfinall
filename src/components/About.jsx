@@ -4,6 +4,7 @@ function About() {
   return (
     <>
       {/* WhatsApp Floating Icon */}
+{/*       s */}
       <img
         src="whatsapp.png"
         alt="WhatsApp Logo"
