@@ -81,21 +81,31 @@ const Resorts = () => {
 
 
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Check if all required fields are filled
-    if (!newReview.name || !newReview.email || !newReview.review || !newReview.rating) {
-      alert('Please fill all fields and provide a rating.');
-      return;
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/reviews`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newReview),
+      });
+      
+      const text = await response.text(); // Read response as text
+      console.log(response); // Log the response body
+      const result = JSON.parse(text); // Parse the response as JSON
+      
+      if (result.success) {
+        alert('Review added successfully!');
+        setReviews((prev) => [...prev, result.review]);
+        setNewReview({ name: '', email: '', review: '', rating: 0 });
+      } else {
+        alert('Failed to add review.');
+      }
+    } catch (error) {
+      console.error('Error submitting review:', error);
     }
-  
-    // Update reviews state
-    setReviews((prevReviews) => [...prevReviews, newReview]);
-  
-    // Reset newReview state
-    setNewReview({ name: '', email: '', review: '', rating: 0 });
   };
+    
     
 
   // Load data from localStorage when component mounts
@@ -117,12 +127,13 @@ const Resorts = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewReview({ ...newReview, [name]: value });
+    setNewReview((prev) => ({ ...prev, [name]: value }));
   };
+  
+const handleRatingChange = (rating) => {
+  setNewReview((prev) => ({ ...prev, rating }));
+};
 
-  const handleRatingChange = (rating) => {
-    setNewReview({ ...newReview, rating });
-  };
 
   
 
@@ -430,88 +441,92 @@ const Resorts = () => {
           )}
 
 
-          {activeTab === 'Reviews' && (
-            <div className="faq-list space-y-4">
-              {resort?.reviewssection?.length > 0 ? (
-        reviews.map((review, index) => (
-          <div
-            key={index}
-            className="review-item border border-gray-200 rounded-lg p-4 shadow-sm bg-white mb-4"
-          >
-            <div className="flex justify-between items-center">
-              <span className="font-medium text-gray-800">{review.name}</span>
-              <div className="flex items-center">
-                {'★'.repeat(review.rating)}
-                {'☆'.repeat(5 - review.rating)}
-              </div>
-            </div>
-            <p className="text-gray-600 mt-2">{review.review}</p>
-          </div>
-        ))
-      ) : (
-        <p className="text-gray-600">No reviews available.</p>
-      )}
-
-      <h3 className="text-lg font-bold mt-8">Add a Review</h3>
-      <form onSubmit={handleSubmit} className="mt-4 space-y-4">
-        <div>
-          <label className="block font-medium">Your Rating *</label>
-          <div className="flex space-x-1">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <span
-                key={star}
-                className={`cursor-pointer ${star <= newReview.rating ? 'text-yellow-500' : 'text-gray-400'}`}
-                onClick={() => handleRatingChange(star)}
-              >
-                ★
-              </span>
-            ))}
-          </div>
-        </div>
-        <div>
-          <label className="block font-medium">Name *</label>
-          <input
-            type="text"
-            name="name"
-            value={newReview.name}
-            onChange={handleInputChange}
-            className="w-full border rounded p-2"
-            placeholder="Your name"
-            required
-          />
-        </div>
-        <div>
-          <label className="block font-medium">Email *</label>
-          <input
-            type="email"
-            name="email"
-            value={newReview.email}
-            onChange={handleInputChange}
-            className="w-full border rounded p-2"
-            placeholder="Your email"
-            required
-          />
-        </div>
-        <div>
-          <label className="block font-medium">Your Review *</label>
-          <textarea
-            name="review"
-            value={newReview.review}
-            onChange={handleInputChange}
-            className="w-full border rounded p-2"
-            placeholder="Write your review here"
-            required
-          />
-        </div>
-        <button
-          type="submit"
-          className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
+{activeTab === 'Reviews' && (
+  <div className="faq-list space-y-4">
+    {resort?.reviewssection?.length > 0 ? (
+      resort.reviewssection.map((review, index) => (
+        <div
+          key={index}
+          className="review-item border border-gray-200 rounded-lg p-4 shadow-sm bg-white mb-4"
         >
-          Submit
-        </button>
-      </form>
-    </div>
-          )}
+          <div className="flex justify-between items-center">
+            <span className="font-medium text-gray-800">{review.name}</span>
+            <div className="flex items-center text-yellow-500">
+              {/* Dynamically render stars */}
+              {[...Array(5)].map((_, i) => (
+                <span key={i} className={i < review.rating ? "text-yellow-500" : "text-gray-300"}>
+                  ★
+                </span>
+              ))}
+            </div>
+          </div>
+          <p className="text-gray-600 mt-2">{review.review}</p>
+        </div>
+      ))
+    ) : (
+      <p className="text-gray-600">No reviews available.</p>
+    )}
+
+    <h3 className="text-lg font-bold mt-8">Add a Review</h3>
+    <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+      <div>
+        <label className="block font-medium">Your Rating *</label>
+        <div className="flex space-x-1">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <span
+              key={star}
+              className={`cursor-pointer ${star <= newReview.rating ? 'text-yellow-500' : 'text-gray-300'}`}
+              onClick={() => handleRatingChange(star)} // Dynamically update rating
+            >
+              ★
+            </span>
+          ))}
+        </div>
+      </div>
+      <div>
+        <label className="block font-medium">Name *</label>
+        <input
+          type="text"
+          name="name"
+          value={newReview.name}
+          onChange={handleInputChange}
+          className="w-full border rounded p-2"
+          placeholder="Your name"
+          required
+        />
+      </div>
+      <div>
+        <label className="block font-medium">Email *</label>
+        <input
+          type="email"
+          name="email"
+          value={newReview.email}
+          onChange={handleInputChange}
+          className="w-full border rounded p-2"
+          placeholder="Your email"
+          required
+        />
+      </div>
+      <div>
+        <label className="block font-medium">Your Review *</label>
+        <textarea
+          name="review"
+          value={newReview.review}
+          onChange={handleInputChange}
+          className="w-full border rounded p-2"
+          placeholder="Write your review here"
+          required
+        />
+      </div>
+      <button
+        type="submit"
+        className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
+      >
+        Submit
+      </button>
+    </form>
+  </div>
+)}
 
 
 
