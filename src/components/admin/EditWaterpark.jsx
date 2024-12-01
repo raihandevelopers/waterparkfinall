@@ -78,59 +78,64 @@ const EditWaterpark = () => {
 
 
   // Handle image file change
-const handleImageChange = async (e) => {
-  const files = e.target.files;
-  const updatedImages = [...formData.images];
+  const handleImageChange = async (e) => {
+    const files = e.target.files;
+    const updatedImages = [...formData.images];
 
-  // Loop through the files and upload each one
-  Array.from(files).forEach(async (file) => {
-    const fileURL = URL.createObjectURL(file); // Preview the image locally
-    updatedImages.push(fileURL);
+    // Loop through the files and upload each one
+    Array.from(files).forEach(async (file) => {
+      const fileURL = URL.createObjectURL(file); // Preview the image locally
+      updatedImages.push(fileURL);
 
-    // Prepare the form data for uploading
-    const formData = new FormData();
-    formData.append('image', file);
+      // Prepare the form data for uploading
+      const formData = new FormData();
+      formData.append('image', file);
+      const token = localStorage.getItem('token'); // Retrieve the token from local storage
 
-    try {
-      // Send a request to the backend to upload the image
-      const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/waterparks/${id}/add-image`, {
-        method: 'POST',
-        body: formData,
-      });
-      console.log(response)
-      if (response.ok) {
-        const result = await response.json();
-        toast.success('Image uploaded successfully');
-        console.log('Image uploaded successfully:', result);
-      } else {
-        toast.error('Failed to upload image');
-        console.error('Failed to upload image:', response.statusText);
+      try {
+        // Send a request to the backend to upload the image
+        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/waterparks/${id}/add-image`, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            Authorization: `Bearer ${token}`, // Include the Bearer token
+          },
+        });
+        console.log(response)
+        if (response.ok) {
+          const result = await response.json();
+          toast.success('Image uploaded successfully');
+          console.log('Image uploaded successfully:', result);
+        } else {
+          toast.error('Failed to upload image');
+          console.error('Failed to upload image:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error uploading image:', error);
       }
-    } catch (error) {
-      console.error('Error uploading image:', error);
-    }
-  });
+    });
 
-  // Update the local state
-  setFormData({ ...formData, images: updatedImages });
-};
+    // Update the local state
+    setFormData({ ...formData, images: updatedImages });
+  };
 
   // Remove image from the list
   const removeImage = async (index) => {
     const imageToRemove = formData.images[index];
     console.log(imageToRemove);
-  
+    const token = localStorage.getItem('token'); // Retrieve the token from local storage
+
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_SERVER_URL}/api/waterparks/${id}/delete-image`, // Replace with your actual delete image endpoint
         { imageUrl: imageToRemove },
         {
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'multipart/form-data', // Since you're sending formData
+            Authorization: `Bearer ${token}`, // Include the Bearer token
           },
-        }
-      );
-  
+        });
+
       // Check if the status code is 200
       if (response.status === 200) {
         // Update the state after successful deletion
@@ -145,13 +150,20 @@ const handleImageChange = async (e) => {
       console.error("Error removing image:", error);
     }
   };
-    
+
 
   const handleSubmit = (e) => {
+    const token = localStorage.getItem('token'); // Retrieve the token from local storage
     console.log("Form data:", formData.faqs);
     e.preventDefault();
     axios
-      .put(`${import.meta.env.VITE_SERVER_URL}/api/waterparks/${id}`, formData)
+      .put(`${import.meta.env.VITE_SERVER_URL}/api/waterparks/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data', // Since you're sending formData
+          Authorization: `Bearer ${token}`, // Include the Bearer token
+        },
+      }
+      )
       .then((response) => {
         if (response.status === 200) {
           console.log("Waterpark updated successfully");

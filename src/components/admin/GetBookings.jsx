@@ -5,12 +5,17 @@ const GetBookings = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const token = localStorage.getItem('token'); // Retrieve the token from local storage
 
   useEffect(() => {
     // Fetch bookings from the backend
     axios
-      .get(`${import.meta.env.VITE_SERVER_URL}/api/bookings/all`)
-      .then((response) => {
+    .get(`${import.meta.env.VITE_SERVER_URL}/api/bookings/all`, {
+      headers: {
+        Authorization: `Bearer ${token}`, // Include the Bearer token
+      },
+    })
+        .then((response) => {
         console.log("Bookings fetched:", response.data);
         setBookings(response.data); // Set the bookings data to state
         setLoading(false); // Set loading to false after data is fetched

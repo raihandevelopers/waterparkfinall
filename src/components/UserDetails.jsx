@@ -15,14 +15,14 @@ export default function UserHome() {
   const [loading, setLoading] = useState(true);  // To track loading state
   const [openIndex, setOpenIndex] = useState(null); // To track the opened dropdown
   const navigate = useNavigate();  // Using useNavigate hook
-
+  const [isAdmin, setIsAdmin] = useState(false);
   const handleToggle = (index) => {
     setOpenIndex(openIndex === index ? null : index); // Toggle the dropdown visibility
   };
 
   const user = JSON.parse(localStorage.getItem("user"));
 
-  const isAdmin = user && user.role == 'admin' ? true : false;
+  // const isAdmin = user && user.role == 'admin' ? true : false;
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
@@ -46,17 +46,26 @@ export default function UserHome() {
 
   const fetchBookings = async (email) => {
     console.log(email);
+    const token = localStorage.getItem('token'); // Retrieve the token from local storage
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_SERVER_URL}/api/bookings/getuserbookings`, // Your backend URL
+        `${import.meta.env.VITE_SERVER_URL}/api/bookings/user`, // Your backend URL
         { email }, // Send email to the backend
-        { headers: { 'Content-Type': 'application/json' } }
+        {
+          headers: {
+            'Content-Type': 'application/json', // Content type
+            Authorization: `Bearer ${token}`, // Include the Bearer token
+          },
+        }
       );
       console.log("response", response);
       // alert("response", response.data.bookings);
       // Check if the response status is 200 (success)
       if (response.status === 200) {
         setBookings(response.data.bookings);  // Set the bookings in state
+        if(response.data.role === 'admin') {
+          setIsAdmin(true);
+        }
       } else {
         console.error(response.data.message);  // Handle no bookings found or error
       }
@@ -128,6 +137,25 @@ export default function UserHome() {
               </Typography>
             ) : (
               <Stack spacing={2} sx={{ width: "100%" }}>
+                {
+                  isAdmin && (
+                    <Button
+                      variant="contained"
+                      sx={{
+                        backgroundColor: "#00CED1",
+                        color: "#ffffff",
+                        padding: "0.5rem 1rem",
+                        textTransform: "none",
+                        borderRadius: "8px",
+                      }}
+                      onClick={() => navigate('/admin')}
+                    >
+                      View Admin Dashboard
+                    </Button>
+                  )
+                }
+
+
                 {bookings.length > 0 ? (
                   bookings.map((booking, index) => (
                     <Paper
@@ -192,24 +220,6 @@ export default function UserHome() {
                 )}
               </Stack>
             )}
-
-            {
-              isAdmin && (
-                <Button
-                  variant="contained"
-                  sx={{
-                    backgroundColor: "#00CED1",
-                    color: "#ffffff",
-                    padding: "0.5rem 1rem",
-                    textTransform: "none",
-                    borderRadius: "8px",
-                  }}
-                  onClick={() => navigate('/admin')}
-                >
-                  View Admin Dashboard
-                </Button>
-              )
-            }
 
             <Button
               variant="contained"

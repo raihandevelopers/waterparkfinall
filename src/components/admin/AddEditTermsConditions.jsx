@@ -27,12 +27,20 @@ function AddEditTermsConditions() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const token = localStorage.getItem('token'); // Retrieve the token from local storage
+
     try {
       const apiUrl = `${import.meta.env.VITE_SERVER_URL}/api/terms`;
 
       const payload = { termsText }; // Corrected payload structure
 
-      const response = await axios.put(apiUrl, payload);
+      const response = await axios.put(apiUrl, payload, {
+        headers: {
+          'Content-Type': 'application/json', // Specify the content type
+          Authorization: `Bearer ${token}`, // Include the Bearer token
+        },
+      });
+
       setMessage(response.data.message || "Successfully updated Terms & Conditions!");
     } catch (error) {
       console.error("Error updating terms and conditions", error);
@@ -49,9 +57,8 @@ function AddEditTermsConditions() {
       </header>
       {message && (
         <p
-          className={`text-center mb-4 ${
-            message.toLowerCase().includes("success") ? "text-green-500" : "text-red-500"
-          }`}
+          className={`text-center mb-4 ${message.toLowerCase().includes("success") ? "text-green-500" : "text-red-500"
+            }`}
         >
           {message}
         </p>

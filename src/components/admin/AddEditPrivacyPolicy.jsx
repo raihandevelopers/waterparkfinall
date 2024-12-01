@@ -37,15 +37,34 @@ function AddEditPrivacyPolicy() {
         // Use PUT method for updating the policy
         apiUrl = `${import.meta.env.VITE_SERVER_URL}/api/privacy-policy`;
         console.log("Updating Privacy Policy with API URL:", apiUrl);
-        const response = await axios.put(apiUrl, { policyText });
-        console.log("Updated Privacy Policy Response:", response.data);
+        const response = await axios.put(
+          apiUrl,
+          { policyText }, // Payload for updating the privacy policy
+          {
+            headers: {
+              'Content-Type': 'application/json', // Specify content type
+              Authorization: `Bearer ${token}`, // Include Bearer token
+            },
+          }
+        );
+    
+            console.log("Updated Privacy Policy Response:", response.data);
         setMessage(response.data.message);
       } else {
         // Use POST method for adding a new policy (optional if you have such an API)
         apiUrl = `${import.meta.env.VITE_SERVER_URL}/api/privacy-policy`;
         console.log("Adding Privacy Policy with API URL:", apiUrl);
-        const response = await axios.post(apiUrl, { policyText });
-        console.log("Added Privacy Policy Response:", response.data);
+        const response = await axios.post(
+          apiUrl,
+          { policyText }, // Payload for adding a new privacy policy
+          {
+            headers: {
+              'Content-Type': 'application/json', // Specify content type
+              Authorization: `Bearer ${token}`, // Include Bearer token
+            },
+          }
+        );
+            console.log("Added Privacy Policy Response:", response.data);
         setMessage(response.data.message);
       }
     } catch (error) {

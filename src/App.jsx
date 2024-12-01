@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.css'
@@ -29,11 +29,42 @@ import TermsAndConditions from './components/TermsAndCond.jsx'
 import UserHome from './components/UserDetails.jsx'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import axios from 'axios';
 function App() {
   const user = JSON.parse(localStorage.getItem("user"));
-  const isAdmin = user && user.role === 'admin';
   const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+
+  const [isAdmin, setIsAdmin] = useState(false);
+  const checkIsUserAdmin = async () => {
+    const token = localStorage.getItem('token'); 
+    console.log(token);
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_SERVER_URL}/api/bookings/user`, // Your backend endpoint
+        {}, // Request body (empty here since no body is required for this check)
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(response);
+        if (response.status === 200) {
+        if(response.data.role === 'admin') {
+          setIsAdmin(true);
+          sessionStorage.setItem('isAdmin', true);
+        }
+      } else {
+        console.error(response.data.message); 
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+  useEffect(()=>{
+    checkIsUserAdmin();
+  },[])
 
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -58,7 +89,7 @@ function App() {
           <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
         </Route>
 
-        {isAdmin && (
+        {(isAdmin || sessionStorage.getItem('isAdmin')) && (
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="add-waterpark" element={<AddWaterpark />} />
             <Route path="edit-waterpark" element={<EditWaterparkList />} />

@@ -45,6 +45,7 @@ export default function AuthPage() {
         // Store necessary data in localStorage (e.g., token and user info)
         localStorage.setItem("user", JSON.stringify(response.data.user));
         localStorage.setItem("isLoggedIn", true);
+        localStorage.setItem("token",response.data.token);
         // Redirect user to dashboard or home page after successful login/signup
         toast.success(tabIndex===0? "Login successful!":"Signup successful!");
         window.location.href = "/"; // Change this to your desired redirect path

@@ -68,36 +68,42 @@ function AddWaterpark() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (images.length === 0) {
       toast.error("Please upload at least one image");
       return;
-    }  
+    }
     // Create a new FormData object on each submit to avoid leftover data
     const data = new FormData();
-  
+
     // Append form data fields
     Object.entries(formData).forEach(([key, value]) => {
       data.append(key, value);
     });
-  
+
     // Append other fields like faqs, included, and excluded
     data.append("faqs", JSON.stringify(faqs));
     data.append("included", JSON.stringify(included));
     data.append("excluded", JSON.stringify(excluded));
-  
+
     // Append images (if any) only if present
     Array.from(images).forEach((image) => {
       data.append("images", image);
     });
-  
-     try {
+    const token = localStorage.getItem('token'); // Retrieve the token from local storage
+
+    try {
       const response = await axios.post(
         `${import.meta.env.VITE_SERVER_URL}/api/waterparks/add-waterpark`,
         data,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data', // Set the content type for form data
+            Authorization: `Bearer ${token}`, // Include the Bearer token
+          },
+        }
       );
-      if(response.status == 201){
+      if (response.status == 201) {
         toast.success(response.data.message);
       }
       console.log(response.data);
@@ -129,8 +135,8 @@ function AddWaterpark() {
       }, 1000);
     }
   };
-  
-  
+
+
   useEffect(() => {
     console.log(images)
   }, [images])
@@ -165,7 +171,7 @@ function AddWaterpark() {
           </div>
         ))}
 
-<div>
+        <div>
           <label className="block text-gray-700 mb-1">Description</label>
           <ReactQuill
             value={formData.description}
