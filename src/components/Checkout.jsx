@@ -49,11 +49,7 @@ function CheckoutPage() {
     try {
       console.log("Order placed with details:", billingDetails, paymentMethod, resortId);
 
-
-      const staticToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzQwMmVlNzRjYzFmNjI2OGYyMTA3YzciLCJpYXQiOjE3MzMwMDE5NTEsImV4cCI6MTczMzYwNjc1MX0.uTUNBo3pWwsdVy0Ics07wgTwcaoNf0mi7VwWnn8Fr8A"; // Replace this with your static token
-
-
-      // Step 1: Create a booking and send it to your backend to get payment URL
+      // Remove the Authorization header
       const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/bookings/create`, {
         waterpark: resortId,
         waterparkName: resortName,
@@ -65,13 +61,7 @@ function CheckoutPage() {
         children: childCount,
         totalPrice: subtotal,
         paymentType: paymentMethod
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${staticToken}` // Adding JWT token to the header
-        }
-      }
-    );
+      });
 
       const { success, paymentUrl, booking, message } = response.data;
 
@@ -88,18 +78,30 @@ function CheckoutPage() {
         return;
       }
 
-      // Step 2: Handle PhonePe payment if selected
       if (paymentMethod === "phonepe" && paymentUrl) {
-        // Redirect user to PhonePe payment page
         window.location.href = paymentUrl;
+  
+        const paymentResponse = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/booking/verify`, {
+          merchantTransactionId: booking._id, // Send the booking ID as merchantTransactionId
+          paymentMethod: "phonepe",
+        });
+  
+        // Log the response from the payment verification
+        console.log("Payment verification response:", paymentResponse.data);
+  
+        if (paymentResponse.data.success) {
+          navigate("/ticket", { state: { booking: paymentResponse.data.booking } });
+        } else {
+          toast.error("Payment failed. Please try again.");
+        }
       }
-
+  
     } catch (error) {
       console.error("Error initiating payment:", error);
       toast.error("Payment initiation failed. Please try again.");
     }
   };
-
+  
   return (
     <>
       <img
