@@ -17,10 +17,10 @@ function CheckoutPage() {
     email: "",
     city: "",
     createAccount: false,
-    total: subtotal
+    total: subtotal,
   });
 
-  const [paymentMethod, setPaymentMethod] = useState("cash"); // Default to cash payment
+  const [paymentMethod, setPaymentMethod] = useState("phonepe"); // Default to PhonePe payment
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -28,15 +28,6 @@ function CheckoutPage() {
       ...prevDetails,
       [name]: type === "checkbox" ? checked : value,
     }));
-  };
-
-  const handlePaymentChange = (e) => {
-    setPaymentMethod(e.target.value);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Order placed with details:", billingDetails, paymentMethod);
   };
 
   const handlePayment = async (e) => {
@@ -49,7 +40,6 @@ function CheckoutPage() {
     try {
       console.log("Order placed with details:", billingDetails, paymentMethod, resortId);
 
-      // Remove the Authorization header
       const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/bookings/create`, {
         waterpark: resortId,
         waterparkName: resortName,
@@ -60,7 +50,7 @@ function CheckoutPage() {
         adults: adultCount,
         children: childCount,
         totalPrice: subtotal,
-        paymentType: paymentMethod
+        paymentType: paymentMethod,
       });
 
       const { success, paymentUrl, booking, message } = response.data;
@@ -71,37 +61,29 @@ function CheckoutPage() {
         return;
       }
 
-      if (paymentMethod === "cash") {
-        console.log("Booking created:", booking);
-        // Navigate to the ticket page with booking details as route params
-        navigate("/ticket", { state: { booking } });
-        return;
-      }
-
       if (paymentMethod === "phonepe" && paymentUrl) {
         window.location.href = paymentUrl;
-  
+
         const paymentResponse = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/booking/verify`, {
           merchantTransactionId: booking._id, // Send the booking ID as merchantTransactionId
           paymentMethod: "phonepe",
         });
-  
-        // Log the response from the payment verification
+
         console.log("Payment verification response:", paymentResponse.data);
-  
+
         if (paymentResponse.data.success) {
+          toast.success("Payment successful!");
           navigate("/ticket", { state: { booking: paymentResponse.data.booking } });
         } else {
           toast.error("Payment failed. Please try again.");
         }
       }
-  
     } catch (error) {
       console.error("Error initiating payment:", error);
       toast.error("Payment initiation failed. Please try again.");
     }
   };
-  
+
   return (
     <>
       <img
@@ -192,10 +174,9 @@ function CheckoutPage() {
               <h2 className="text-xl font-semibold text-gray-800 mb-4">Payment Method</h2>
               <select
                 value={paymentMethod}
-                onChange={handlePaymentChange}
+                onChange={(e) => setPaymentMethod(e.target.value)}
                 className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-200"
               >
-                <option value="cash">Cash on Delivery</option>
                 <option value="phonepe">PhonePe</option>
               </select>
             </div>
