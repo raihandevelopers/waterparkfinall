@@ -49,7 +49,7 @@ function CheckoutPage() {
         date: date,
         adults: adultCount,
         children: childCount,
-        totalPrice: subtotal,
+        advanceAmount: deposit,
         paymentType: paymentMethod,
       });
 
