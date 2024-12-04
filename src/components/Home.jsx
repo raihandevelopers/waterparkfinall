@@ -23,14 +23,15 @@ const Card = ({ resort }) => {
         <h3 className="font-semibold">{resort.name || "Unnamed Resort"}</h3>
         <p className="price">
           <div>
-            <span className="current-price">
-              ₹{resort.price || resort.adultPrice || "N/A"}
-            </span>
-            {resort.discountPercentage > 0 && (
-              <span className="original-price">
-                ₹{(resort.adultPrice - (resort.adultPrice * resort.discountPercentage) / 100).toFixed(2)}
-              </span>
-            )}
+          <span className="current-price">
+  ₹{resort.discountedPrice || resort.adultPrice  || "N/A"}
+</span>
+{resort.discountPercentage > 0 && resort.adultPrice  && (
+  <span className="original-price" style={{ textDecoration: 'line-through', color: 'gray' }}>
+    ₹{resort.adultPrice }
+  </span>
+)}
+
           </div>
           <button className="explore-button" onClick={handleBookClick}>
             Book

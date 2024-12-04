@@ -49,6 +49,7 @@ function CheckoutPage() {
         date: date,
         adults: adultCount,
         children: childCount,
+         total: subtotal,
         advanceAmount: deposit,
         paymentType: paymentMethod,
       });
@@ -123,6 +124,8 @@ function CheckoutPage() {
                     />
                   </div>
                 ))}
+              
+
               </div>
             </div>
 
@@ -168,6 +171,9 @@ function CheckoutPage() {
                 </table>
               </div>
             </div>
+
+       
+
 
             {/* Payment Method Section */}
             <div>

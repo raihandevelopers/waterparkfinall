@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import "react-quill/dist/quill.snow.css"; // Import styles
+import ReactQuill from "react-quill";
+
 
 const EditWaterpark = () => {
   const { id } = useParams();
@@ -14,6 +17,7 @@ const EditWaterpark = () => {
     adultPrice: 0,
     childPrice: 0,
     discountPercentage: 0,
+    discountedPrice: 0,
     advanceAmount: "",
     weekendPriceIncrease: "",
     map: "",
@@ -189,6 +193,10 @@ const EditWaterpark = () => {
     setFormData({ ...formData, faqs: updatedFaqs }); // Update the state
   };
 
+  
+  const handleDescriptionChange = (value) => {
+    setFormData((prev) => ({ ...prev, description: value }));
+  };
 
   return (
     <div className="p-4">
@@ -223,17 +231,16 @@ const EditWaterpark = () => {
           />
         </div>
 
-        {/* Description */}
         <div>
-          <label className="block font-semibold">Description</label>
-          <textarea
-            name="description"
+          <label className="block text-gray-700 mb-1">Description</label>
+          <ReactQuill
             value={formData.description}
-            onChange={handleChange}
-            className="border w-full p-2 rounded"
-            required
+            onChange={handleDescriptionChange}
+            className="border rounded-lg"
+            theme="snow"
           />
         </div>
+
 
         {/* Price */}
         <div>
@@ -261,11 +268,11 @@ const EditWaterpark = () => {
 
         {/* Discount Price */}
         <div>
-          <label className="block font-semibold">Discount Percentage</label>
+          <label className="block font-semibold">discountedPrice</label>
           <input
             type="number"
-            name="discountPercentage"
-            value={formData.discountPercentage}
+            name="discountedPrice"
+            value={formData.discountedPrice}
             onChange={handleChange}
             className="border w-full p-2 rounded"
           />

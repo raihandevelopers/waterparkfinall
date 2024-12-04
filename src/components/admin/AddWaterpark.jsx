@@ -13,6 +13,7 @@ function AddWaterpark() {
     map: "",
     adultPrice: "",
     childPrice: "",
+    discountedPrice: "" ,
     discountPercentage: "",
     advanceAmount: "",
     weekendPriceIncrease: "",
@@ -117,6 +118,7 @@ function AddWaterpark() {
         childPrice: "",
         discountPercentage: "",
         advanceAmount: "",
+        discountedPrice: "" ,
         weekendPriceIncrease: "",
       });
       setFaqs([{ question: "", answer: "" }]); // Reset FAQs
@@ -151,6 +153,7 @@ function AddWaterpark() {
           { label: "Adult Price", name: "adultPrice", type: "number" },
           { label: "Child Price", name: "childPrice", type: "number" },
           { label: "Discount Percentage", name: "discountPercentage", type: "number" },
+          { label: "discountedPrice", name: "discountedPrice", type: "number" },
           { label: "Advance Amount", name: "advanceAmount", type: "number" },
           {
             label: "Weekend Price Increase (%)",

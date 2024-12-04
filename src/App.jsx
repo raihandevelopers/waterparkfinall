@@ -37,7 +37,7 @@ function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const checkIsUserAdmin = async () => {
     const token = localStorage.getItem('token'); 
-    console.log(token);
+    // console.log(token);
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_SERVER_URL}/api/bookings/user`, // Your backend endpoint

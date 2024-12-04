@@ -614,10 +614,10 @@ const Resorts = () => {
               <strong>Subtotal:</strong>
               <strong>₹{subtotal}</strong>
             </div>
-            <div className="summary-item">
+            {/* <div className="summary-item">
               <span>Pickup & Drop</span>
               <span>₹{pickup ? 100 : 0}</span>
-            </div>
+            </div> */}
             <div className="summary-item total">
               <strong>Total Amt.:</strong>
               <strong>₹{total}</strong>
@@ -629,7 +629,7 @@ const Resorts = () => {
           </div>
 
 
-          <div className="pickup-option">
+          {/* <div className="pickup-option">
             <input
               type='checkbox'
               checked={pickup}
@@ -637,7 +637,7 @@ const Resorts = () => {
             />
             <label>Pickup & Drop Service 100rs per Person</label>
           </div>
-
+ */}
 
 
 
