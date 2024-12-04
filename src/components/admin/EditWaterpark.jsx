@@ -268,7 +268,7 @@ const EditWaterpark = () => {
 
         {/* Discount Price */}
         <div>
-          <label className="block font-semibold">discountedPrice</label>
+          <label className="block font-semibold">Discount Price</label>
           <input
             type="number"
             name="discountedPrice"

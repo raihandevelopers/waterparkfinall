@@ -152,8 +152,7 @@ function AddWaterpark() {
           { label: "Google Maps Link", name: "map", type: "text" },
           { label: "Adult Price", name: "adultPrice", type: "number" },
           { label: "Child Price", name: "childPrice", type: "number" },
-          { label: "Discount Percentage", name: "discountPercentage", type: "number" },
-          { label: "discountedPrice", name: "discountedPrice", type: "number" },
+          { label: "Discount Price", name: "discountedPrice", type: "number" },
           { label: "Advance Amount", name: "advanceAmount", type: "number" },
           {
             label: "Weekend Price Increase (%)",
