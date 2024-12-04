@@ -360,9 +360,9 @@ const Resorts = () => {
                       <span className="">
                         ₹{(resort.adultPrice - (resort.adultPrice * resort.discountPercentage) / 100).toFixed(2)}
                       </span> {' '}
-                      <span className="line-through text-gray-500">
+                      {/* <span className="line-through text-gray-500">
                         ₹{resort.adultPrice}
-                      </span>{' '}
+                      </span>{' '} */}
                     </>
                   ) : (
                     <>₹{resort.adultPrice}</>
@@ -379,9 +379,9 @@ const Resorts = () => {
                       <span>
                         ₹{(resort.childPrice - (resort.childPrice * resort.discountPercentage) / 100).toFixed(2)}
                       </span> {' '}
-                      <span className="line-through text-gray-500">
+                      {/* <span className="line-through text-gray-500">
                         ₹{resort.childPrice}
-                      </span>{' '}
+                      </span>{' '} */}
                     </>
                   ) : (
                     <>₹{resort.childPrice}</>

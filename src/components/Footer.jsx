@@ -113,7 +113,7 @@ const Footer = () => {
             </NavLink>
         </div>
         <div className="fomoinfo">
-          <NavLink to="/waterparks" className="fomoinfo"><img src="/waterpark.jpg" alt="" />
+          <NavLink to="/waterparks" className="fomoinfo"><img src="/waterpark.png" alt="" />
             <p style={{ fontSize: "12px" }}> Water Parks</p>
           </NavLink>
         </div>
