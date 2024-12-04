@@ -136,7 +136,11 @@ const WaterparkTicket = () => {
               justifyContent: "center",
             }}
           >
-            Pay on Waterpark - ₹{booking.totalPrice}/-
+            Pay on Waterpark  ₹
+            {booking.deposit && booking.advanceAmount
+              ? booking.deposit - booking.advanceAmount
+              : "N/A"}
+            /-
           </h3>
         </div>
       </div>
