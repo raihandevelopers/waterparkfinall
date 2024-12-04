@@ -84,16 +84,14 @@ const WaterParks = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <span className="text-lg font-bold text-green-600">
-                        ₹{park.adultPrice}
-                      </span>
-                      {park.discountPercentage > 0 && (
-                        <span className="original-price">
-                          ₹{(park.adultPrice - (park.adultPrice * park.discountPercentage) / 100).toFixed(2)}
-                        </span>
-                      )}
-                      <span className="text-sm line-through text-gray-400 ml-2">
-                        {park.originalPrice}
-                      </span>
+                      ₹{park.adultPrice || park.discountedPrice || "N/A"}
+</span>
+{park.adultPrice && park.discountedPrice && (
+  <span className="original-price" style={{ textDecoration: 'line-through', color: 'gray', marginLeft: '8px' }}>
+    ₹{park.discountedPrice}
+  </span>
+)}
+
                     </div>
                     <button className="bg-blue-600 text-white py-1 px-3 rounded" onClick={() => handleBookClick(park)}>
                       Book

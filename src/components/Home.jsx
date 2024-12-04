@@ -24,11 +24,11 @@ const Card = ({ resort }) => {
         <p className="price">
           <div>
           <span className="current-price">
-  ₹{resort.discountedPrice || resort.adultPrice || "N/A"}
+  ₹{resort.adultPrice || resort.discountedPrice || "N/A"}
 </span>
-{resort.discountedPrice && resort.adultPrice && (
+{resort.adultPrice && resort.discountedPrice && (
   <span className="original-price" style={{ textDecoration: 'line-through', color: 'gray', marginLeft: '8px' }}>
-    ₹{resort.adultPrice}
+    ₹{resort.discountedPrice}
   </span>
 )}
 
