@@ -135,7 +135,7 @@ const EditWaterpark = () => {
         { imageUrl: imageToRemove },
         {
           headers: {
-            'Content-Type': 'multipart/form-data', // Since you're sending formData
+            'Content-Type': 'application/json', // Since you're sending formData
             Authorization: `Bearer ${token}`, // Include the Bearer token
           },
         });
