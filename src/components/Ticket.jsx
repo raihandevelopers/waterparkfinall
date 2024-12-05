@@ -41,13 +41,17 @@ const WaterparkTicket = () => {
   // Download ticket as PNG
   const handleDownload = () => {
     const ticketElement = document.getElementById("ticket");
-    html2canvas(ticketElement).then((canvas) => {
+    html2canvas(ticketElement, {
+      scale: 2, // Increases resolution
+      useCORS: true, // Ensures external assets are loaded correctly
+    }).then((canvas) => {
       const imgData = canvas.toDataURL("image/png");
       const link = document.createElement("a");
       link.href = imgData;
       link.download = "waterpark-ticket.png";
       link.click();
     });
+    
   };
 
   return (
@@ -64,6 +68,7 @@ const WaterparkTicket = () => {
       >
         {/* Ticket Header */}
         <div className="relative bg-[#fff] text-white text-center py-4">
+        <h1 className="text-lg font-bold text-blue-800 mt-2 text-center">Waterpark Ticket</h1>
           <h1 className="text-lg font-bold">Creating Memories</h1>
           <p className="text-sm italic text-black">One Adventure at a Time with Waterparkchalo</p>
           <div className="absolute top-2 right-2">
@@ -142,6 +147,21 @@ const WaterparkTicket = () => {
               : "N/A"}
             /-
           </h3>
+           {/* Add Terms and Conditions Below */}
+        <div className="mt-4">
+          <h4 className="font-bold text-center mb-2">Terms and Conditions</h4>
+          <ul className="list-disc pl-4 text-sm">
+            <li>Please carry cash for remaining payment.</li>
+            <li>Drinking is strictly prohibited in the waterpark.</li>
+            <li>Pickup and drop service is not included in this package.</li>
+            <li>
+              In case of any dispute or misunderstanding, the waterpark holds the final decision.
+            </li>
+            <li>
+              For refund and cancellation, contact us 1 day before your check-in date.
+            </li>
+          </ul>
+        </div>
         </div>
       </div>
     </div>

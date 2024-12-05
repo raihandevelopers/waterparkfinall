@@ -776,31 +776,43 @@ h2 {
 
 .ticket {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 0;
-  border-bottom: 1px solid #eee;
+  justify-content: space-between; /* Space between elements */
+  align-items: center; /* Align items vertically */
+  padding: 10px 0; /* Padding for spacing */
+  border-bottom: 1px solid #eee; /* Subtle bottom border for separation */
+  background-color: #fff; /* Optional: Ensures a consistent background */
 }
 
 .ticket span {
-  font-size: 16px;
+  font-size: 16px; /* Readable text size */
+  color: #333; /* Dark text for better visibility */
 }
 
 .ticket button {
-  background-color: #0156B3;
-  color: white;
-  border: none;
-  padding: 0; /* Reset padding to avoid uneven shape */
-  cursor: pointer;
-  border-radius: 50%; /* Ensures the button is circular */
-  font-size: 16px;
-  width: 40px; /* Set equal width and height */
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center; /* Center the content */
+  background-color: #0156B3; /* Blue background for the button */
+  color: #fff; /* White text for contrast */
+  border: none; /* Remove default border */
+  padding: 0; /* Ensure no extra padding */
+  cursor: pointer; /* Pointer cursor on hover */
+  border-radius: 50%; /* Make the button circular */
+  font-size: 16px; /* Text/icon size inside the button */
+  width: 40px; /* Set width */
+  height: 40px; /* Equal height for a perfect circle */
+  display: flex; /* Flexbox for centering */
+  align-items: center; /* Center content vertically */
+  justify-content: center; /* Center content horizontally */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Add hover effect */
 }
 
+.ticket button:hover {
+  background-color: #013d80; /* Darker blue on hover */
+  transform: scale(1.1); /* Slight zoom effect */
+}
+
+.ticket button:active {
+  transform: scale(0.95); /* Slight shrink on click */
+}
 
 .booking-summary {
   background-color: #f9f9f9;
