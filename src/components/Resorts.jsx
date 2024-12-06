@@ -176,6 +176,19 @@ const Resorts = () => {
     saveSelectedDateToLocalStorage(formattedDate); // Save the formatted date to localStorage
   };
 
+  const isWeekend = (date) => {
+    const day = new Date(date).getDay();
+    return day === 6 || day === 0; // 6 = Saturday, 0 = Sunday
+  };
+
+const adjustedAdultPrice = isWeekend(selectedDate) && resort?.weekendPriceIncrease
+    ? adultPrice + resort?.weekendPriceIncrease
+    : adultPrice;
+
+  const adjustedChildPrice = isWeekend(selectedDate) && resort?.weekendPriceIncrease
+    ? childPrice + resort?.weekendPriceIncrease
+    : childPrice;
+
 
   // Function to format the month and year (e.g., "October 2024")
   const formatMonthYear = (date) => {
@@ -197,12 +210,14 @@ const Resorts = () => {
     return daysArray;
   };
   // Function to retrieve the selected date from localStorage
-  const retrieveSelectedDate = () => {
+const retrieveSelectedDate = () => {
     const storedDate = localStorage.getItem('selectedDate');
+    
     if (storedDate) {
-      setSelectedDate(new Date(storedDate));  // Set the stored date in state
+        setSelectedDate(new Date(storedDate)); // Convert string back to Date
     }
-  };
+};
+
 
   // Save selected date to localStorage
   const saveSelectedDateToLocalStorage = (date) => {
@@ -223,11 +238,8 @@ const Resorts = () => {
     : childPrice;
 
   // Calculate subtotal using discounted prices if applicable
-  const subtotal = adultCount * discountedAdultPrice + childCount * discountedChildPrice;
-
-  // Total remains the same as subtotal for now
+  const subtotal = adultCount * adjustedAdultPrice + childCount * adjustedChildPrice;
   const total = subtotal;
-
   // Calculate the total advance amount
   const dtotal = adultCount * resort.advanceAmount + childCount * resort.advanceAmount;
 
@@ -241,6 +253,9 @@ const Resorts = () => {
     // retrieveSelectedDate();
   }, [adultCount, childCount, pickup, selectedDate, dtotal]);
 
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+  };
 
   const handleAdultChange = (increment) => {
     setAdultCount((prev) => Math.max(0, prev + increment));
@@ -393,7 +408,7 @@ const Resorts = () => {
                 <strong>Advance Amount:</strong> ₹{resort?.advanceAmount}
               </p>
               <p>
-                <strong>Weekend Price Increase:</strong> {resort?.weekendPriceIncrease}%
+                <strong>Weekend Price Increase:</strong> ₹{resort?.weekendPriceIncrease}
               </p>
             </div>
           )}
@@ -573,8 +588,11 @@ const Resorts = () => {
         <div className="booking-container py-3">
           <h2>Select Booking Date</h2>
           <div className="flex justify-center">
-            <Calendar onChange={handleChange} value={value} minDate={new Date()} />
-          </div>
+          <Calendar
+        onChange={handleDateChange}
+        value={selectedDate}
+        minDate={new Date()}
+      />          </div>
 
 
 

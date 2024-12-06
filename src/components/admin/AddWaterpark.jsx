@@ -155,7 +155,7 @@ function AddWaterpark() {
           { label: "Discount Price (Should be greater than Adult Price)", name: "discountedPrice", type: "number" },
           { label: "Advance Amount", name: "advanceAmount", type: "number" },
           {
-            label: "Weekend Price Increase (%)",
+            label: "Weekend Price Increase",
             name: "weekendPriceIncrease",
             type: "number",
           },
