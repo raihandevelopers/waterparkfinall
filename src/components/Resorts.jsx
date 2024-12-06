@@ -301,7 +301,7 @@ const retrieveSelectedDate = () => {
     const data = {
       adultCount: adultCount,
       childCount: childCount,
-      date: selectedDate,
+      date: selectedDate.toDateString(),
       resortName: resort.name,
       subtotal: subtotal,
       deposit: pickup ? dtotal + 100 : dtotal,
