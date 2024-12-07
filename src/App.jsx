@@ -26,6 +26,11 @@ import EditWaterpark from './components/admin/EditWaterpark.jsx'
 import WaterparkTicket from './components/Ticket.jsx'
 import RefundsAndCancellations from './components/Refund.jsx'
 import TermsAndConditions from './components/TermsAndCond.jsx'
+
+import ForgotPassword from "./components/ForgotPassword";
+import ResetPassword from "./components/ResetPassword";
+
+
 import UserHome from './components/UserDetails.jsx'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -77,6 +82,8 @@ function App() {
           <Route path="review" element={<Review />} />
           <Route path="gallery" element={<Influencers />} />
           <Route path="resorts" element={<Resorts />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route path="checkout" element={<CheckoutPage />} />
           <Route path="UserDetails" element={<UserHome />} />
           <Route

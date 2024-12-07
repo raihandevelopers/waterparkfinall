@@ -193,6 +193,13 @@ export default function AuthPage() {
             </div>
           )}
 
+<p className="mt-4 text-sm text-center text-gray-500">
+  <a href="/forgot-password" className="text-black underline">
+    Forgot Password?
+  </a>
+</p>
+
+
           {/* Submit Button */}
           <button
             type="submit"
@@ -200,6 +207,7 @@ export default function AuthPage() {
           >
             {tabIndex === 0 ? "Login" : "Sign Up"}
           </button>
+          
         </form>
 
         {/* Terms and Conditions (Sign Up only) */}
