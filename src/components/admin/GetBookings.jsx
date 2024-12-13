@@ -18,9 +18,7 @@ const GetBookings = () => {
       })
       .then((response) => {
         console.log("Bookings fetched:", response.data);
-        // Sort bookings by bookingDate to show the latest first
-        const sortedBookings = response.data.sort((a, b) => new Date(b.bookingDate) - new Date(a.bookingDate));
-        setBookings(sortedBookings); // Set the sorted bookings data to state
+        setBookings(response.data); // Set the fetched bookings data to state
         setLoading(false); // Set loading to false after data is fetched
       })
       .catch((err) => {
@@ -66,6 +64,7 @@ const GetBookings = () => {
               <th className="px-4 py-2 text-left">Booking Date</th>
               <th className="px-4 py-2 text-left">Email</th>
               <th className="px-4 py-2 text-left">Total Price</th>
+              <th className="px-4 py-2 text-left">Advance Amount</th>
               <th className="px-4 py-2 text-left">Phone</th>
               <th className="px-4 py-2 text-left">Adults</th>
               <th className="px-4 py-2 text-left">Children</th>
@@ -82,7 +81,8 @@ const GetBookings = () => {
                   <td className="px-4 py-2">{new Date(booking.date).toLocaleDateString()}</td>
                   <td className="px-4 py-2">{new Date(booking.bookingDate).toLocaleDateString()}</td>
                   <td className="px-4 py-2">{booking.email}</td>
-                  <td className="px-4 py-2">{booking.totalPrice}</td>
+                  <td className="px-4 py-2">{booking.totalAmount}</td>
+                  <td className="px-4 py-2">{booking.advanceAmount}</td>
                   <td className="px-4 py-2">{booking.phone}</td>
                   <td className="px-4 py-2">{booking.adults}</td>
                   <td className="px-4 py-2">{booking.children}</td>

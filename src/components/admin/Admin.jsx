@@ -44,6 +44,18 @@ function AdminLayout() {
             Edit Waterpark
           </NavLink>
           <NavLink
+            to="/admin/add-banner"
+            className={({ isActive }) =>
+              `px-4 py-2 rounded-lg ${
+                isActive
+                  ? "bg-indigo-500 text-white font-semibold"
+                  : "hover:bg-indigo-600"
+              }`
+            }
+          >
+            Add Banner
+          </NavLink>
+          <NavLink
             to="/admin/get-bookings"
             className={({ isActive }) =>
               `px-4 py-2 rounded-lg ${

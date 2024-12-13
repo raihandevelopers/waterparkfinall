@@ -23,6 +23,7 @@ import EditWaterparkList from './components/admin/EditWaterparkList.jsx'
 import AddEditPrivacyPolicy from './components/admin/AddEditPrivacyPolicy.jsx';
 import AddEditTermsConditions from './components/admin/AddEditTermsConditions.jsx';
 import EditWaterpark from './components/admin/EditWaterpark.jsx'
+import Addbannner from './components/admin/Addbannner.jsx'
 import WaterparkTicket from './components/Ticket.jsx'
 import RefundsAndCancellations from './components/Refund.jsx'
 import TermsAndConditions from './components/TermsAndCond.jsx'
@@ -104,6 +105,7 @@ function App() {
             <Route path="get-bookings" element={<GetBookings />} />
             <Route path="privacypolicy" element={<AddEditPrivacyPolicy />} />
             <Route path="termsconditions" element={<AddEditTermsConditions />} />
+            <Route path="/admin/add-banner" element={<Addbannner />} />
           </Route>
         )}
       </>

@@ -1,12 +1,10 @@
-import React, { useEffect } from 'react';
-import { useState } from 'react';
-import { Link, NavLink } from 'react-router-dom'
-import axios from 'axios'
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFacebook, faWhatsapp, faInstagram, faYoutube } from "@fortawesome/free-brands-svg-icons";
 
-
+// Card Component
 const Card = ({ resort }) => {
   const navigate = useNavigate();
 
@@ -23,16 +21,14 @@ const Card = ({ resort }) => {
         <h3 className="font-semibold">{resort.name || "Unnamed Resort"}</h3>
         <p className="price">
           <div>
-          <span className="current-price">
-  ₹{resort.adultPrice || resort.discountedPrice || "N/A"}
-</span>
-{resort.adultPrice && resort.discountedPrice && (
-  <span className="original-price" style={{ textDecoration: 'line-through', color: 'gray', marginLeft: '8px' }}>
-    ₹{resort.discountedPrice}
-  </span>
-)}
-
-
+            <span className="current-price">
+              ₹{resort.adultPrice || resort.discountedPrice || "N/A"}
+            </span>
+            {resort.adultPrice && resort.discountedPrice && (
+              <span className="original-price" style={{ textDecoration: "line-through", color: "gray", marginLeft: "8px" }}>
+                ₹{resort.discountedPrice}
+              </span>
+            )}
           </div>
           <button className="explore-button" onClick={handleBookClick}>
             Book
@@ -43,55 +39,84 @@ const Card = ({ resort }) => {
   );
 };
 
-
 const Home = () => {
   const [resorts, setResorts] = useState([]);
-  const images = [
-    'https://newdemo.rreda.in/wp-content/uploads/2024/11/post-1.jpg',
-    'https://newdemo.rreda.in/wp-content/uploads/2024/11/post-2.jpg',
-    'https://newdemo.rreda.in/wp-content/uploads/2024/11/post-1.jpg',
-    'https://newdemo.rreda.in/wp-content/uploads/2024/11/post-2.jpg',
-  ];
-
+  const [banners, setBanners] = useState([]); // State to hold banners
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true); // Loading state
   const [isAnimating, setIsAnimating] = useState(false); // Track animation state
+  const navigate = useNavigate();
 
-  const goToPrevious = () => {
-    const isFirstImage = currentIndex === 0;
-    const newIndex = isFirstImage ? images.length - 1 : currentIndex - 1;
-    triggerAnimation(newIndex);
+  const getToken = () => localStorage.getItem("token");
+
+
+  // Fetching banners from the API
+  const fetchBanners = async () => {
+    try {
+      const token = getToken();
+      const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/banners`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (response.ok && Array.isArray(data.banners)) {
+        setBanners(data.banners); // Directly set the array
+      } else {
+        setMessage(data.message || "Failed to fetch banners.");
+      }
+    } catch (error) {
+      console.error("Error fetching banners:", error);
+      setMessage("An error occurred while fetching banners.");
+    }
   };
 
-  const goToNext = () => {
-    const isLastImage = currentIndex === images.length - 1;
-    const newIndex = isLastImage ? 0 : currentIndex + 1;
-    triggerAnimation(newIndex);
-  };
-
-  // api calling
   useEffect(() => {
-    const fetchWaterparks = async () => {
+    fetchBanners();
+  }, []);  
+
+  // Fetching resorts
+  useEffect(() => {
+    const fetchResorts = async () => {
       setLoading(true); // Set loading to true before API call
       try {
         const response = await axios.get(`${import.meta.env.VITE_SERVER_URL}/api/waterparks`);
         setResorts(response.data.waterparks);
-        console.log("Waterparks fetched:", response.data);
       } catch (error) {
         console.error("Error fetching waterparks:", error);
-      }
-      finally {
+      } finally {
         setLoading(false); // Set loading to false after API call
       }
     };
 
-    fetchWaterparks();
+    fetchResorts();
   }, []);
-  useEffect(() => {
-    const interval = setInterval(goToNext, 2500);
 
-    return () => clearInterval(interval); // Cleanup on component unmount
-  }, [currentIndex]);
+  // Auto-sliding functionality
+  useEffect(() => {
+    if (banners.length > 0) {
+      const interval = setInterval(() => {
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % banners.length);
+      }, 2500); // Change slide every 2 seconds
+
+      return () => clearInterval(interval); // Cleanup on component unmount
+    }
+  }, [banners]);
+
+  const goToPrevious = () => {
+    const isFirstImage = currentIndex === 0;
+    const newIndex = isFirstImage ? banners.length - 1 : currentIndex - 1;
+    triggerAnimation(newIndex);
+  };
+
+  const goToNext = () => {
+    const isLastImage = currentIndex === banners.length - 1;
+    const newIndex = isLastImage ? 0 : currentIndex + 1;
+    triggerAnimation(newIndex);
+  };
+
   const triggerAnimation = (newIndex) => {
     setIsAnimating(true); // Start animation
     setTimeout(() => {
@@ -100,36 +125,59 @@ const Home = () => {
     }, 500); // Match the animation duration in CSS
   };
 
-
   return (
     <div className="homepage">
+      {/* WhatsApp Button */}
       <img
         src="whatsapp.png"
         alt="WhatsApp Logo"
         className="w-24 h-24 fixed z-[10] top-[75vh] cursor-pointer"
         onClick={() => window.open("https://wa.me/918847714464", "_blank")}
       />
-      <div className="carousel-card">
-        <button className="carousel-button left" onClick={goToPrevious}>
+
+  {/* Carousel for Banner Images */}
+  <div className="carousel-card relative">
+        {/* Left Arrow */}
+        <button className="carousel-button left absolute top-1/2 left-4 transform -translate-y-1/2 z-10" onClick={goToPrevious}>
           &#10094;
         </button>
 
-        <div
-          className={`carousel-image ${isAnimating ? "animate-slide" : ""}`}
-        >
-          <img src={images[currentIndex]} alt={`Slide ${currentIndex}`} />
+        <div className="carousel-image w-full h-64 md:h-80 lg:h-96 overflow-hidden relative">
+          {banners.length > 0 ? (
+            <div
+              className="w-full h-full flex transition-transform duration-500"
+              style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+            >
+              {banners
+                .filter((banner) => banner && banner.image) // Ensure the banner object exists and has an image
+                .map((banner) => (
+                  <div key={banner._id} className="w-full h-full flex-shrink-0">
+                    <img
+                      src={banner.image} // Safely use the image URL
+                      alt={`Banner ${banner._id}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ))}
+            </div>
+          ) : (
+            <p>No banners available</p>
+          )}
         </div>
 
-        <button className="carousel-button right" onClick={goToNext}>
+        {/* Right Arrow */}
+        <button className="carousel-button right absolute top-1/2 right-4 transform -translate-y-1/2 z-10" onClick={goToNext}>
           &#10095;
         </button>
       </div>
 
       <div className="homeinfo">
-        <p className="homeinfop text-4xl"><b>Most Popular Tour</b>  <br />
-          <p className='font-normal text-[15px]'>Your Ultimate Destination for Fun and Adventure!</p>
+        <p className="homeinfop text-4xl">
+          <b>Most Popular Tour</b> <br />
+          <p className="font-normal text-[15px]">Your Ultimate Destination for Fun and Adventure!</p>
         </p>
       </div>
+
       {loading ? (
         <div className="flex justify-center items-center h-64">
           <div className="loader w-16 h-16 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
@@ -141,8 +189,9 @@ const Home = () => {
           ))}
         </div>
       )}
-      <div className="foot">
 
+      {/* Footer */}
+      <div className="foot">
         <div className="fbottomm">
           <a href="/" className="flex justify-center items-center">
             <div className="logo">
@@ -153,6 +202,7 @@ const Home = () => {
           <div className="fbl">
             <p>© 2024 Water park chalo</p>
           </div>
+
           <div className="fbr">
             <a href="https://www.facebook.com/" className="text-sm hover:text-gray-300">
               <FontAwesomeIcon icon={faFacebook} size="xl" />
@@ -160,7 +210,7 @@ const Home = () => {
             <a href="https://wa.me/9146869202" className="text-sm hover:text-gray-300">
               <FontAwesomeIcon icon={faWhatsapp} size="xl" />
             </a>
-            <a href="https://instagram.com/waterpark_chalo?igshid=OGQ5ZDc2ODk2ZA==" className="text-sm hover:text-gray-300">
+            <a href="https://instagram.com/waterpark_chalo" className="text-sm hover:text-gray-300">
               <FontAwesomeIcon icon={faInstagram} size="xl" />
             </a>
             <a href="https://www.youtube.com/@Waterparkchalo" className="text-sm hover:text-gray-300">
@@ -168,7 +218,6 @@ const Home = () => {
             </a>
           </div>
         </div>
-
       </div>
     </div>
   );

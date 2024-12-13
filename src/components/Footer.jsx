@@ -21,7 +21,9 @@ const Footer = () => {
       <div className="footer">
 
         <div className="fleft">
-          <a href='/'>  <img src="https://newdemo.rreda.in/wp-content/uploads/2023/04/cropped-Untitled-design-1.png" alt="" /></a>
+        <a href='/'>  
+  <img src="/logo.png" alt="Waterpark Chalo Logo" />
+</a>
         </div>
         <div className="fm">
           <div className="fmcon">
