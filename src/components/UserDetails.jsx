@@ -156,7 +156,7 @@ export default function UserHome() {
                 }
 
 
-                {bookings.length > 0 ? (
+                {bookings && bookings.length > 0 ? (
                   bookings.map((booking, index) => (
                     <Paper
                       key={index}
