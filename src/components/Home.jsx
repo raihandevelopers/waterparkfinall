@@ -135,41 +135,53 @@ const Home = () => {
         onClick={() => window.open("https://wa.me/918847714464", "_blank")}
       />
 
-  {/* Carousel for Banner Images */}
-  <div className="carousel-card relative">
-        {/* Left Arrow */}
-        <button className="carousel-button left absolute top-1/2 left-4 transform -translate-y-1/2 z-10" onClick={goToPrevious}>
-          &#10094;
-        </button>
+<div className="carousel-container relative w-screen h-[500px] md:h-[535px] overflow-hidden">
+  {/* Left Arrow */}
+  <button
+    className="absolute top-1/2 left-4 transform -translate-y-1/2 z-10 bg-white text-black rounded-full p-2"
+    onClick={goToPrevious}
+  >
+    &#10094;
+  </button>
 
-        <div className="carousel-image w-full h-64 md:h-80 lg:h-96 overflow-hidden relative">
-          {banners.length > 0 ? (
-            <div
-              className="w-full h-full flex transition-transform duration-500"
-              style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-            >
-              {banners
-                .filter((banner) => banner && banner.image) // Ensure the banner object exists and has an image
-                .map((banner) => (
-                  <div key={banner._id} className="w-full h-full flex-shrink-0">
-                    <img
-                      src={banner.image} // Safely use the image URL
-                      alt={`Banner ${banner._id}`}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                ))}
-            </div>
-          ) : (
-            <p>No banners available</p>
-          )}
+  <div
+    className="carousel-content flex w-full h-full transition-transform duration-500"
+    style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+  >
+    {banners.length > 0 ? (
+      banners.map((banner, index) => (
+        <div
+          key={index}
+          className="carousel-slide relative w-full h-full flex-shrink-0"
+        >
+          {/* Banner Image */}
+          <img
+            src={banner.image}
+            alt={`Banner ${index}`}
+            className="w-full h-full object-cover"
+          />
+
+        
         </div>
+      ))
+    ) : (
+      <p className="w-full h-full flex items-center justify-center text-xl">
+        No banners available
+      </p>
+    )}
+  </div>
 
-        {/* Right Arrow */}
-        <button className="carousel-button right absolute top-1/2 right-4 transform -translate-y-1/2 z-10" onClick={goToNext}>
-          &#10095;
-        </button>
-      </div>
+  {/* Right Arrow */}
+  <button
+    className="absolute top-1/2 right-4 transform -translate-y-1/2 z-10 bg-white text-black rounded-full p-2"
+    onClick={goToNext}
+  >
+    &#10095;
+  </button>
+</div>
+
+
+
 
       <div className="homeinfo">
         <p className="homeinfop text-4xl">
