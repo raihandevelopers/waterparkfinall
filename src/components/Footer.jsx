@@ -68,7 +68,7 @@ const Footer = () => {
               </div>
               <div className="cright">
                 <p>Address</p>
-                <p>110,Lakshmi Apt 1,Alkapuri, Nallasopara  491209</p>
+                <p>110,Lakshmi Apt 1,Alkapuri, Nallasopara  401209</p>
               </div>
 
             </div>

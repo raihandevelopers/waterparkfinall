@@ -58,7 +58,7 @@ function ContactPage() {
                 <div>
                   <h3 className="text-lg font-medium text-gray-700">Address</h3>
                   <p className="text-gray-600">
-                    110, Lakshmi Apt, Near Kailash Darshan 1, Alkapuri, Nallasopara East 491209
+                    110, Lakshmi Apt, Near Kailash Darshan 1, Alkapuri, Nallasopara East 401209
                   </p>
                 </div>
               </div>
