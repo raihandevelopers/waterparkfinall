@@ -20,7 +20,7 @@ function CheckoutPage() {
     total: subtotal,
   });
 
-  const [paymentMethod, setPaymentMethod] = useState("phonepe"); // Default to PhonePe payment
+  const [paymentMethod, setPaymentMethod] = useState("razorpay"); // Default to Razorpay payment
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -49,35 +49,62 @@ function CheckoutPage() {
         date: date,
         adults: adultCount,
         children: childCount,
-         total: subtotal,
+        total: subtotal,
         advanceAmount: deposit,
         paymentType: paymentMethod,
       });
 
-      const { success, paymentUrl, booking, message } = response.data;
+      const { success, orderId, booking, key, amount, currency, name, description, prefill } = response.data;
 
       if (!success) {
-        console.error("Error:", message);
+        console.error("Error:", response.data.message);
         toast.error("Failed to create booking. Please try again.");
         return;
       }
 
-      if (paymentMethod === "phonepe" && paymentUrl) {
-        window.location.href = paymentUrl;
+      if (paymentMethod === "razorpay" && orderId) {
+        // Initialize Razorpay payment
+        const options = {
+          key: key,
+          amount: amount,
+          currency: currency,
+          name: name,
+          description: description,
+          order_id: orderId,
+          prefill: prefill,
+          handler: async function (response) {
+            try {
+              // Verify payment on backend
+              const verifyResponse = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/bookings/verify-payment`, {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                bookingId: booking._id
+              });
 
-        const paymentResponse = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/booking/verify`, {
-          merchantTransactionId: booking._id, // Send the booking ID as merchantTransactionId
-          paymentMethod: "phonepe",
-        });
+              if (verifyResponse.data.success) {
+                toast.success("Payment successful!");
+                navigate("/ticket", { state: { booking: verifyResponse.data.booking } });
+              } else {
+                toast.error("Payment verification failed. Please contact support.");
+              }
+            } catch (error) {
+              console.error("Payment verification error:", error);
+              toast.error("Payment verification failed. Please contact support.");
+            }
+          },
+          modal: {
+            ondismiss: function() {
+              toast.info("Payment cancelled");
+            }
+          }
+        };
 
-        console.log("Payment verification response:", paymentResponse.data);
-
-        if (paymentResponse.data.success) {
-          toast.success("Payment successful!");
-          navigate("/ticket", { state: { booking: paymentResponse.data.booking } });
-        } else {
-          toast.error("Payment failed. Please try again.");
-        }
+        const rzp = new window.Razorpay(options);
+        rzp.open();
+      } else if (paymentMethod === "cash") {
+        toast.success("Booking created successfully with cash payment.");
+        navigate("/ticket", { state: { booking: booking } });
       }
     } catch (error) {
       console.error("Error initiating payment:", error);
@@ -124,8 +151,6 @@ function CheckoutPage() {
                     />
                   </div>
                 ))}
-              
-
               </div>
             </div>
 
@@ -172,9 +197,6 @@ function CheckoutPage() {
               </div>
             </div>
 
-       
-
-
             {/* Payment Method Section */}
             <div>
               <h2 className="text-xl font-semibold text-gray-800 mb-4">Payment Method</h2>
@@ -183,7 +205,7 @@ function CheckoutPage() {
                 onChange={(e) => setPaymentMethod(e.target.value)}
                 className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-200"
               >
-                <option value="phonepe">PhonePe</option>
+                <option value="razorpay">Razorpay</option>
               </select>
             </div>
 

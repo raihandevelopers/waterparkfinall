@@ -100,7 +100,7 @@ const WaterparkTicket = () => {
               <span className="block break-words max-w-full">{booking._id}</span>
             </p>
             <p>
-              <span className="font-bold">Payment Id:</span> {booking.paymentType === "PhonePe" ? "pay_P5cD6ESfdBTZ0B" : "COD"}
+              <span className="font-bold">Payment Id:</span> {booking.paymentType === "Razorpay" ? booking.paymentId || "Razorpay Payment" : booking.paymentType === "PhonePe" ? "pay_P5cD6ESfdBTZ0B" : "COD"}
             </p>
             <p>
               <span className="font-bold">Booking Date:</span>{" "}
