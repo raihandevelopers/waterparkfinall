@@ -25,9 +25,9 @@ const RefundsAndCancellations = () => {
       <section>
         <h2 className="text-2xl font-semibold mb-4">2. Refunds</h2>
         <ul className="list-disc pl-5">
-          <li>For refund of any booking contact with us before one day of your check-in date. Refunds, if applicable, will be processed in accordance with the cancellation policy and the method of payment used for the booking.</li>
+          <li>For refund of any booking contact with us before one day of your check-in date. Refunds, if applixcable, will be processed in accordance with the cancellation policy and the method of payment used for the booking.</li>
           <li>If the cancellation is made within the specified period to receive a refund, the amount will be refunded to the original payment method used during booking.</li>
-          <li>Refunds may take 7 working business days to appear in your account, depending on the policies of your financial institution.</li>
+          <li>Post approval, we will process the refund within 2  business days and it will be credited to the original payment method within 7 business days</li>
         </ul>
       </section>
 
